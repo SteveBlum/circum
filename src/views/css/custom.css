@@ -1,0 +1,41 @@
+.margin-topleft {
+	margin-left: 20px !important;
+	margin-top: 20px !important;
+}
+.label-right {
+	justify-content: flex-end !important; 
+}
+.carousel-inner iframe {
+	width: 100%; 
+	height: 100%;
+}
+.carousel .btn {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.carousel-control-next,
+.carousel-control-prev {
+	height: 26%;
+	top: 33%;
+	width: 86px;
+}
+.dropdown-submenu {
+	position: absolute;
+	left: 100%;
+	top: 0%;
+}
+.dropdown-menu > li:hover > .dropdown-submenu {
+	display: block;
+}
+
+.fixedTable {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.urlCell {
+	width: 50%;
+	overflow: auto;
+	overflow-wrap: break-word;
+}

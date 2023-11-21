@@ -1,0 +1,105 @@
+body {
+    color: rgb(30, 150, 0);;
+    overflow-x: hidden;
+    height: 100%;
+    background-color: #000000;
+    background-repeat: no-repeat;
+}
+
+.card0 {
+    width: 94%;
+}
+
+.card1 {
+    padding: 30px 20px 30px 50px;
+}
+
+.main-weather {
+    font-size: 20rem; 
+    color: rgb(30, 150, 0);
+}
+
+.green-font {
+    color: rgb(30, 150, 0);
+}
+
+.image {
+    width: 300px;
+    height: 300px;
+}
+
+.large-font {
+    font-size: 70px;
+    font-family: Arial;
+}
+
+.fa-sun-o {
+    font-size: 22px;
+}
+
+.card2 {
+    background-color: #000000;
+    padding: 0px 0px 40px 40px;
+}
+
+input {
+    background-color: #000000;
+    padding: 24px 0px 12px 0px !important;
+    width: 80%;
+    box-sizing: border-box;
+    border: none !important;
+    border-bottom: 1px solid #CFD8DC !important;
+    font-size: 16px !important;
+    color: #ffffff !important;
+}
+
+input:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #fff !important;
+    outline-width: 0;
+    font-weight: 400;
+}
+
+::placeholder {
+    color: rgb(30, 150, 0) !important;
+    opacity: 1;
+}
+
+:-ms-input-placeholder {
+    color: rgb(30, 150, 0) !important;
+}
+
+::-ms-input-placeholder {
+    color: rgb(30, 150, 0) !important;
+}
+
+.fa-search {
+    color: #607D8B;
+    background-color: #E1F5FE;
+    font-size: 20px;
+    padding: 20px;
+    width: 20%;
+    cursor: pointer;
+}
+
+.light-text {
+    color: #B0BEC5;
+}
+
+.suggestion:hover {
+    color: #fff;
+    cursor: pointer;
+}
+
+.line {
+    height: 1px;
+    background-color: rgb(30, 150, 0);
+}
+
+@media screen and (max-width: 500px) {
+    .card1 {
+        padding-left: 26px;
+    }
+}

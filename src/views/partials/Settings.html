@@ -1,0 +1,69 @@
+<div class="modal" id="settings">
+	<div class="modal-dialog modal-dialog-scrollable modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Settings</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3 mt-3">
+					<label id="refreshRateDiv" for="refreshRateSlider" class="form-label">Refresh rate</label>
+					<input id="refreshRateSlider" type="range" class="form-range" min="0" max="3600" step="10">
+					<p id="refreshRate">10</p>
+				</div>
+				<input class="form-check-input" type="checkbox" id="useGlobalRotationRateCheckBox">
+				<label class="form-check-label">Global rotation rate</label>
+				<div id="rotationRateDiv" class="mb-3 mt-3">
+					<label for="rotationRateSlider" class="form-label">Rotation rate</label>
+					<input id="rotationRateSlider" type="range" class="form-range" min="5" max="600" step="5">
+					<p id="rotationRate">10</p>
+				</div>
+				<!-- Based on editable table by MDB https://mdbootstrap.com/docs/b4/jquery/tables/editable/#! -->
+				<table id="frameTable" class="table table-bordered table-striped text-center fixedTable">
+					<thead>
+						<tr>
+							<th id="frameUrlHeader" class="text-center urlCell">URL</th>
+							<th id="frameRotationRateHeader" class="text-center">Rotation Rate</th>
+							<th id="frameStatusHeader" class="text-center">Status</th>
+							<th id="frameMoveHeader" class="text-center">Move Frame</th>
+							<th id="frameRemoveHeader" class="text-center">Remove</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="pt-3-half" contenteditable="true">./rubbish.html</td>
+							<td class="pt-3-half" contenteditable="true">0</td>
+							<td class="pt-3-half">
+								<i class="bi bi-check-circle-fill text-success"></i>
+							</td>
+							<td class="pt-3-half">	
+								<span class="table-up">
+									<a href="#!">
+										<i class="bi bi-arrow-up indigo-text" aria-hidden="true"></i>
+									</a>
+								</span>
+								<span class="table-down">
+									<a href="#!">
+										<i class="bi bi-arrow-down indigo-text" aria-hidden="true"></i>
+									</a>
+								</span>
+							</td>
+							<td>
+								<span class="table-remove">
+									<button type="button" class="btn btn-danger btn-rounded btn-sm my-0">Remove</button>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<button id="addFrameButton" type="button" class="btn btn-success float-end">
+					<i class="bi bi-plus-lg"></i> Add Frame
+				</button>
+			</div>
+			<div class="modal-footer">
+				<button id="discardConfigButton" type="button" class="btn btn-secondary float-start" data-bs-dismiss="modal">Close</button>
+				<button id="saveConfigButton" type="button" class="btn btn-primary float-end" data-bs-dismiss="modal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>

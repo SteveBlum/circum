@@ -1,0 +1,274 @@
+import { ConfigModel, Settings } from "../models/Config";
+import { BaseController, ControllerElementTyped } from "./baseController";
+
+export class SettingsPopupController extends BaseController<Settings> {
+    protected _model: ConfigModel;
+    protected unsavedConfig: Settings;
+    public loading: Promise<void>;
+    constructor(model: ConfigModel) {
+        super();
+        this.addListener();
+        model.listener.add(this.refreshView.bind(this));
+        this._model = model;
+        this.unsavedConfig = structuredClone(this.config);
+        this.loading = this.refresh();
+    }
+    set config(newConfig: Settings) {
+        this._model.config = newConfig;
+        this.loading = this.refresh();
+    }
+    get config(): Settings {
+        return this._model.config;
+    }
+    protected addListener(): void {
+        this.modal.addListener("show.bs.modal", () => {
+            this.refreshView(this.unsavedConfig);
+        });
+        this.refreshRateSlider.addListener("load", (event) => {
+            const target = event.target as HTMLInputElement;
+            this.unsavedConfig.refreshRate = parseInt(target.value);
+            this.refreshView(this.unsavedConfig);
+        });
+        this.refreshRateSlider.addListener("input", (event) => {
+            const target = event.target as HTMLInputElement;
+            this.unsavedConfig.refreshRate = parseInt(target.value);
+            this.refreshView(this.unsavedConfig);
+        });
+        this.rotationRateSlider.addListener("load", (event) => {
+            const target = event.target as HTMLInputElement;
+            this.unsavedConfig.rotationRate = parseInt(target.value);
+            this.refreshView(this.unsavedConfig);
+        });
+        this.rotationRateSlider.addListener("input", (event) => {
+            const target = event.target as HTMLInputElement;
+            this.unsavedConfig.rotationRate = parseInt(target.value);
+            this.refreshView(this.unsavedConfig);
+        });
+        this.addFrameButton.addListener("click", () => {
+            this.unsavedConfig.sites.push({ url: "", rotationRate: this.config.rotationRate });
+            this.refreshView(this.unsavedConfig);
+        });
+        this.discardConfigButton.addListener("click", () => {
+            this.unsavedConfig = structuredClone(this.config);
+        });
+        this.saveConfigButton.addListener("click", () => {
+            this.config = structuredClone(this.unsavedConfig);
+            try {
+                localStorage.setItem("config", JSON.stringify(this.config));
+            } catch {
+                // Do nothing, this is allowed to fail
+            }
+        });
+        this.useGlobalRotationRateCheckBox.addListener("click", () => {
+            this.unsavedConfig.useGlobalRotationRate = !this.unsavedConfig.useGlobalRotationRate;
+            this.unsavedConfig.sites.forEach((site) => {
+                site.rotationRate = this.unsavedConfig.rotationRate;
+            });
+            this.refreshView(this.unsavedConfig);
+        });
+    }
+    public refreshView(data: Settings | Error): void {
+        if (data instanceof Error) throw data;
+        this.updateRefreshRate();
+        this.updateUseGlobalRotationRate();
+        this.updateRotationRate();
+        this.updateFrameItems();
+    }
+    private updateUseGlobalRotationRate(): void {
+        this.useGlobalRotationRateCheckBox.get().checked = this.unsavedConfig.useGlobalRotationRate;
+    }
+    private updateFrameItems(): void {
+        const newBody = document.createElement("tbody");
+        this.unsavedConfig.sites.forEach((site, index) => {
+            const row = newBody.insertRow(-1);
+            row.id = `frame${index.toString()}`;
+            const urlCell = row.insertCell(this.getTableColumnIndex("frameUrlHeader"));
+            urlCell.id = `frame${index.toString()}-url`;
+            urlCell.className = "pt-3-half urlCell";
+            urlCell.contentEditable = "true";
+            urlCell.textContent = site.url;
+            urlCell.addEventListener("input", (event) => {
+                const target = event.target as HTMLTableCellElement;
+                let index = Array.from(this.frameTable.get().rows).findIndex((row) => {
+                    // Due to the way this cell is added, it always has a parentElement
+                    /* istanbul ignore next */
+                    return row.id === target.parentElement?.id;
+                });
+                if (!target.textContent) {
+                    return;
+                }
+                // We need to substract 1 from the index since the "header row" of the table counts as first row
+                index -= 1;
+                this.unsavedConfig.sites[index].url = target.textContent;
+            });
+            const rotationRateCell = row.insertCell(this.getTableColumnIndex("frameRotationRateHeader"));
+            rotationRateCell.id = `frame${index.toString()}-rotationRate`;
+            rotationRateCell.className = "pt-3-half";
+            rotationRateCell.contentEditable = "true";
+            rotationRateCell.textContent = site.rotationRate.toString();
+            rotationRateCell.addEventListener("input", (event) => {
+                const target = event.target as HTMLTableCellElement;
+                let index = Array.from(this.frameTable.get().rows).findIndex((row) => {
+                    // Due to the way this cell is added, it always has a parentElement
+                    /* istanbul ignore next */
+                    return row.id === target.parentElement?.id;
+                });
+                if (!target.textContent) {
+                    return;
+                }
+                // We need to substract 1 from the index since the "header row" of the table counts as first row
+                index -= 1;
+                this.unsavedConfig.sites[index].rotationRate = parseInt(target.textContent);
+            });
+            rotationRateCell.hidden = this.unsavedConfig.useGlobalRotationRate;
+            const statusCell = row.insertCell(this.getTableColumnIndex("frameStatusHeader"));
+            statusCell.id = `frame${index.toString()}-status`;
+            statusCell.className = "pt-3-half";
+            statusCell.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+            const moveCell = row.insertCell(this.getTableColumnIndex("frameMoveHeader"));
+            moveCell.id = `frame${index.toString()}-move`;
+            moveCell.className = "pt-3-half";
+            const moveUpButton = document.createElement("button");
+            moveUpButton.id = `frame${index.toString()}-moveUpButton`;
+            const moveUpIcon = document.createElement("i");
+            moveUpIcon.id = `frame${index.toString()}-moveUpIcon`;
+            moveUpIcon.className = "bi bi-arrow-up indigo-text";
+            moveUpButton.appendChild(moveUpIcon);
+            const moveDownButton = document.createElement("button");
+            moveDownButton.id = `frame${index.toString()}-moveDownButton`;
+            const moveDownIcon = document.createElement("i");
+            moveDownIcon.id = `frame${index.toString()}-moveDownIcon`;
+            moveDownIcon.className = "bi bi-arrow-down indigo-text";
+            moveDownButton.appendChild(moveDownIcon);
+            moveUpButton.addEventListener("click", (event) => {
+                const target = event.currentTarget as HTMLAnchorElement;
+                let index = Array.from(this.frameTable.get().rows).findIndex((row) => {
+                    // Due to the way this cell is added, it always has a parentElement
+                    /* istanbul ignore next */
+                    return row.id === target.parentElement?.parentElement?.id;
+                });
+                // We need to substract 1 from the index since the "header row" of the table counts as first row
+                index -= 1;
+                // if we are already at the top, or if there is only one item, than we are done here
+                if (index <= 0 || this.unsavedConfig.sites.length < 2) {
+                    return;
+                }
+                [this.unsavedConfig.sites[index - 1], this.unsavedConfig.sites[index]] = [
+                    this.unsavedConfig.sites[index],
+                    this.unsavedConfig.sites[index - 1],
+                ];
+                this.refreshView(this.unsavedConfig);
+            });
+            moveDownButton.addEventListener("click", (event) => {
+                const target = event.currentTarget as HTMLAnchorElement;
+                let index = Array.from(this.frameTable.get().rows).findIndex((row) => {
+                    // Due to the way this cell is added, it always has a parentElement
+                    /* istanbul ignore next */
+                    return row.id === target.parentElement?.parentElement?.id;
+                });
+                // We need to substract 1 from the index since the "header row" of the table counts as first row
+                index -= 1;
+                // if we are already at the bottom, or if there is only one item, than we are done here
+                if (index >= this.unsavedConfig.sites.length - 1 || this.unsavedConfig.sites.length < 2) {
+                    return;
+                }
+                [this.unsavedConfig.sites[index], this.unsavedConfig.sites[index + 1]] = [
+                    this.unsavedConfig.sites[index + 1],
+                    this.unsavedConfig.sites[index],
+                ];
+                this.refreshView(this.unsavedConfig);
+            });
+            moveCell.appendChild(moveUpButton);
+            moveCell.appendChild(moveDownButton);
+            const removeCell = row.insertCell(this.getTableColumnIndex("frameRemoveHeader"));
+            removeCell.id = `frame${index.toString()}-remove`;
+            removeCell.className = "pt-3-half";
+            const removeButton = document.createElement("button");
+            removeButton.id = `frame${index.toString()}-removeButton`;
+            removeButton.className = "btn btn-danger btn-rounded btn-sm my-0";
+            removeButton.innerText = "Remove";
+            removeButton.addEventListener("click", (event) => {
+                const target = event.currentTarget as HTMLButtonElement;
+                let index = Array.from(this.frameTable.get().rows).findIndex((row) => {
+                    // Due to the way this cell is added, it always has a parentElement
+                    /* istanbul ignore next */
+                    return row.id === target.parentElement?.parentElement?.id;
+                });
+                // We need to substract 1 from the index since the "header row" of the table counts as first row
+                index -= 1;
+                this.unsavedConfig.sites.splice(index, 1);
+                this.refreshView(this.unsavedConfig);
+            });
+            removeCell.appendChild(removeButton);
+        });
+        const table = this.frameTable.get();
+        table.tBodies[0].replaceWith(newBody);
+    }
+    public async refresh(): Promise<void> {
+        return this._model.refresh();
+    }
+    get frameTable(): ControllerElementTyped<"table"> {
+        return this.typedElement("frameTable", "table");
+    }
+    get addFrameButton(): ControllerElementTyped<"button"> {
+        return this.typedElement("addFrameButton", "button");
+    }
+    get saveConfigButton(): ControllerElementTyped<"button"> {
+        return this.typedElement("saveConfigButton", "button");
+    }
+    get useGlobalRotationRateCheckBox(): ControllerElementTyped<"input"> {
+        return this.typedElement("useGlobalRotationRateCheckBox", "input");
+    }
+    get frameRotationRateHeader(): ControllerElementTyped<"th"> {
+        return this.typedElement("frameRotationRateHeader", "th");
+    }
+    get rotationRateDiv(): ControllerElementTyped<"div"> {
+        return this.typedElement("rotationRateDiv", "div");
+    }
+    get discardConfigButton(): ControllerElementTyped<"button"> {
+        return this.typedElement("discardConfigButton", "button");
+    }
+    get modal(): ControllerElementTyped<"div"> {
+        return this.typedElement("settings", "div");
+    }
+    get refreshRateSlider(): ControllerElementTyped<"input"> {
+        return this.typedElement("refreshRateSlider", "input");
+    }
+    get rotationRateSlider(): ControllerElementTyped<"input"> {
+        return this.typedElement("rotationRateSlider", "input");
+    }
+    get refreshRateText(): HTMLParagraphElement {
+        return this.typedElement("refreshRate", "p").get();
+    }
+    get rotationRateText(): HTMLParagraphElement {
+        return this.typedElement("rotationRate", "p").get();
+    }
+    private updateRefreshRate(): void {
+        const value = this.unsavedConfig.refreshRate;
+        this.refreshRateText.innerText = value.toString();
+        this.refreshRateSlider.get().value = value.toString();
+    }
+    private updateRotationRate(): void {
+        const value = this.unsavedConfig.rotationRate;
+        this.rotationRateText.innerText = value.toString();
+        this.rotationRateSlider.get().value = value.toString();
+        this.rotationRateDiv.get().hidden = !this.unsavedConfig.useGlobalRotationRate;
+        this.frameRotationRateHeader.get().hidden = this.unsavedConfig.useGlobalRotationRate;
+        if (this.unsavedConfig.useGlobalRotationRate) {
+            this.unsavedConfig.sites.forEach((site) => {
+                site.rotationRate = this.unsavedConfig.rotationRate;
+            });
+        }
+    }
+    protected getTableColumnIndex(headerId: string): number {
+        const headerCell = this.typedElement(headerId, "th").get();
+        const headerRow = headerCell.parentElement;
+        if (!headerRow) {
+            throw new Error(`No parent found for header cell ${headerId}`);
+        }
+        const headers = Array.from(headerRow.children);
+        return headers.findIndex((header) => {
+            return header.id === headerId;
+        });
+    }
+}

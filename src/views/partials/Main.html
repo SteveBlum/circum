@@ -1,0 +1,27 @@
+<div id="mainContainer">
+	<div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+		<!-- Wrapper for slides -->
+		<div id="myCarouselInner" class="carousel-inner">
+		</div>
+		<!-- Left and right controls -->
+		<button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon"></span>
+		</button>
+		<button class="carousel-control-next" type="button" data-bs-target="#myCarousel " data-bs-slide="next">
+			<span class="carousel-control-next-icon"></span>
+		</button>
+		<button id="mainMenuButton" class="btn btn-outline-light dropdown-toggle margin-topleft" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+			<i class="bi bi-menu-up"></i>
+		</button>
+		<ul id="mainMenu" class="dropdown-menu">
+			<li><a id="fullscreenButton" class="dropdown-item" href="#">
+				<i class="bi bi-fullscreen p-2"></i>Fullscreen
+			</a></li>
+			<li><a id="refreshNowButton" class="dropdown-item refreshOption" href="#" refreshRate=0>
+				<i class="bi bi-arrow-clockwise p-2"></i>Refresh</a></li>
+			<li><a id="settingsButton" class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#settings">
+				<i class="bi bi-gear-fill p-2"></i>Settings
+			</a></li>
+		</ul>
+	</div>
+</div>
