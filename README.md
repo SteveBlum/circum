@@ -29,6 +29,12 @@
 
 ## How To Use
 
+### Using public page
+
+The current stable version of circum is running at https://steveblum.github.io/circum/
+Remember that any settings you save in circum are only stored in your browser, so this page is safe to use.
+It is however possible to run circum yourself if you prefer a local deployment (see below).
+
 ### Using Web server
 ```bash
 # Clone this repository
