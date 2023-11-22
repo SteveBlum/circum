@@ -7,4 +7,8 @@ export default defineConfig({
             // implement node event listeners here
         },
     },
+    reporter: "mochawesome",
+    reporterOptions: {
+        reportDir: "reports/e2e",
+    },
 });
