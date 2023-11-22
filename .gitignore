@@ -1,6 +1,4 @@
 dist
 node_modules
-eslint-report.html
-coverage
 .vscode
 cypress/screenshots

@@ -35,6 +35,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run eslint
+    - name: Archive eslint results
+      uses: actions/upload-artifact@v3
+      with:
+        name: eslint-report
+        path: reports/eslint-report.html
   unit-test:
     runs-on: ubuntu-latest
     strategy:
@@ -49,6 +54,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm test
+    - name: Archive code coverage results
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-coverage-report
+        path: reports/coverage/lcov-report
   e2e-test:
     runs-on: ubuntu-latest
     strategy:
@@ -63,3 +73,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run cypress:run
+    - name: Archive e2e test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: e2e-test-report
+        path: reports/e2e

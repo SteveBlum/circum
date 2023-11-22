@@ -8,5 +8,7 @@ const config: Config.InitialOptions = {
     },
     testEnvironment: "./tests/FixJSDOMEnvironment.ts",
     coveragePathIgnorePatterns: ["/node_modules/", "/src/controller/frames/weather/open-meteo-client", ".instance.ts"],
+    coverageDirectory: "./reports/coverage",
+    reporters: [["github-actions", { silent: false }], "summary"],
 };
 export default config;
