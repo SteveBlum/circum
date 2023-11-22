@@ -88,15 +88,17 @@ $ npm start
 ## Built with
 
 <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" height="40" /><br/>
-<img src="https://raw.githubusercontent.com/webpack/media/master/logo/logo-on-dark-bg.svg" alt="webpack" height="100" />
+<img src="https://raw.githubusercontent.com/webpack/media/master/logo/logo-on-dark-bg.svg" alt="webpack" height="100" /><br/>
+<img src="https://getbootstrap.com/docs/5.0/assets/brand/bootstrap-logo.svg" alt="Bootstrap" height="40" />
+
 
 ## Acknowledgments
 
 - [Canvas Clock](https://codepen.io/Maku2202/pen/MarRgK/) by Marco Antonio Aguilar Acuña, based on which I developed the default clock page
 - [Weather Report](https://bbbootstrap.com/snippets/complete-weather-report-search-bar-32715352/) by Omar Bailkeri, which was my starting point for the default weather report page
 - [iframe-carousel](https://github.com/alphafitch/iframe-carousel) by Christoph Fisher, which has a similar functionality as this project
-- [bootstrap-carousel] by saruba which (if memory serves) was the project which planted the idea for this in my mind
-- [Markdownify] by Amit Merchant, from which I took the template for this Readme file
+- [bootstrap-carousel](https://github.com/saruba/bootstrap-carousel) by saruba which (if memory serves) was the project which planted the idea for this in my mind
+- [Markdownify](https://github.com/amitmerchant1990/electron-markdownify) by Amit Merchant, from which I took the template for this Readme file
 
 ## License
 
