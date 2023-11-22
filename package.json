@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A simple page which rotates between multiple websites using iframes",
   "main": "index.js",
+  "homepage": "https://github.com/SteveBlum/circum",
   "scripts": {
     "build": "npm run build:webpack",
     "build:transpile": "tsc --build",
