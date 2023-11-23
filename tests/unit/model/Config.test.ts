@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { defaults, ConfigModel } from "../../../src/models/Config";
+import { defaults, ConfigModel, Settings } from "../../../src/models/Config";
 
 describe("Config Model class", () => {
+    afterEach(() => {
+        ConfigModel.reset();
+    });
     describe("Save", () => {
         it("Saves to localStorage", () => {
             const model = new ConfigModel();
@@ -11,27 +14,37 @@ describe("Config Model class", () => {
     });
     describe("load", () => {
         it("Returns saved config from localStorage", () => {
-            const model = new ConfigModel();
             localStorage.setItem(
                 "config",
                 '{"sites":[{"url":"./frames/clock.html","rotationRate":60},{"url":"./frames/weather.html","rotationRate":60}],"useGlobalRotationRate":true,"rotationRate":60,"refreshRate":6000}',
             );
-            expect(model.load().refreshRate).toBe(6000);
+            expect(ConfigModel.load().refreshRate).toBe(6000);
         });
         it("Returns default values if saved config is invalid JSON", () => {
-            const model = new ConfigModel();
             localStorage.setItem("config", "invalid");
-            expect(model.load()).toStrictEqual(defaults);
+            expect(ConfigModel.load()).toStrictEqual(defaults);
         });
         it("Returns default values if saved config doesn't exist", () => {
-            const model = new ConfigModel();
             localStorage.removeItem("config");
-            expect(model.load()).toStrictEqual(defaults);
+            expect(ConfigModel.load()).toStrictEqual(defaults);
         });
         it("Returns default values if saved config type is incompatible", () => {
-            const model = new ConfigModel();
             localStorage.setItem("config", '{ "someValue": 20}');
-            expect(model.load()).toStrictEqual(defaults);
+            expect(ConfigModel.load()).toStrictEqual(defaults);
+        });
+        it("Non-default config is immediately loaded", async () => {
+            localStorage.setItem(
+                "config",
+                JSON.stringify({
+                    sites: [{ url: "./frames/clock.html", rotationRate: 60 }],
+                    useGlobalRotationRate: true,
+                    rotationRate: 70,
+                    refreshRate: 700,
+                }),
+            );
+            const model = new ConfigModel();
+            const res = await model.data;
+            expect((res as Settings).refreshRate).toBe(700);
         });
     });
 });

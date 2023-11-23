@@ -78,7 +78,7 @@ describe("Main Controller", () => {
                 refreshRate: 600,
             };
             controller.refreshView(newConfig);
-            expect(controller.config).toStrictEqual(configModel.config);
+            expect(controller.config).toStrictEqual(ConfigModel.config);
         });
         it("Adjusts frames in case frame config was changed", () => {
             const newConfig = {

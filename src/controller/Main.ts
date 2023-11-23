@@ -27,11 +27,11 @@ export class MainController extends BaseController<Settings> {
         void this.refresh();
     }
     set config(newConfig: Settings) {
-        this._model.config = newConfig;
+        ConfigModel.config = newConfig;
         void this.refresh();
     }
     get config(): Settings {
-        return this._model.config;
+        return ConfigModel.config;
     }
     protected addListener(): void {
         this.fullscreenButton.addListener("click", () => {
