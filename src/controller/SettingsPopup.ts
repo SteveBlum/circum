@@ -14,11 +14,11 @@ export class SettingsPopupController extends BaseController<Settings> {
         this.loading = this.refresh();
     }
     set config(newConfig: Settings) {
-        this._model.config = newConfig;
+        ConfigModel.config = newConfig;
         this.loading = this.refresh();
     }
     get config(): Settings {
-        return this._model.config;
+        return ConfigModel.config;
     }
     protected addListener(): void {
         this.modal.addListener("show.bs.modal", () => {

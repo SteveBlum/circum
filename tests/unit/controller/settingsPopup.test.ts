@@ -133,7 +133,7 @@ describe("Settings Popup Controller", () => {
                 refreshRate: 600,
             };
             controller.refreshView(newConfig);
-            expect(controller.configObject).toStrictEqual(configModel.config);
+            expect(controller.configObject).toStrictEqual(ConfigModel.config);
         });
         it("Throws error if provided with one", () => {
             expect(() => {
