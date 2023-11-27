@@ -7,9 +7,14 @@ describe("Clock Frame Controller", () => {
         public darkenColor = super.darkenColor.bind(this);
         public renderTime = super.renderTime.bind(this);
         public screenResize = super.screenResize.bind(this);
-        public interval = super.interval;
         get configObject(): ClockConfig {
             return this.config;
+        }
+        get intervalTest(): NodeJS.Timer | undefined {
+            return this.interval;
+        }
+        set intervalTest(interval: NodeJS.Timer | undefined) {
+            this.interval = interval;
         }
     }
     let controller: TestController;
@@ -142,9 +147,9 @@ describe("Clock Frame Controller", () => {
             controller = new TestController(config);
         });
         it("Starts interval", () => {
-            controller.interval = undefined;
+            controller.intervalTest = undefined;
             controller.refreshView(config);
-            expect(controller.interval).not.toBeUndefined();
+            expect(controller.intervalTest).not.toBeUndefined();
         });
         it("Updates configuration", () => {
             const newConfig = config;
