@@ -3,8 +3,15 @@ import { MainController } from "./Main";
 import { SettingsPopupController } from "./SettingsPopup";
 
 if ("serviceWorker" in navigator) {
-    void navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch((err: Error) => {
-        console.error(err.message);
+    window.addEventListener("load", () => {
+        navigator.serviceWorker
+            .register("/service-worker.js")
+            .then((registration) => {
+                console.log("SW registered: ", registration);
+            })
+            .catch((registrationError) => {
+                console.log("SW registration failed: ", registrationError);
+            });
     });
 }
 

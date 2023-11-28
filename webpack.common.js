@@ -1,6 +1,7 @@
 const path = require("path");
 const HtmlBundlerPlugin = require("html-bundler-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const WorkboxPlugin = require("workbox-webpack-plugin");
 
 module.exports = {
     resolve: {
@@ -26,17 +27,20 @@ module.exports = {
                 },
             },
             js: {
-                filename: "assets/js/[name].js",
+                filename: "assets/js/[name].[contenthash:8].js",
             },
             css: {
-                filename: "assets/css/[name].css",
+                filename: "assets/css/[name].[contenthash:8].css",
             },
         }),
         new CopyPlugin({
             patterns: [
-                { from: "src/sw.js", to: "sw.js" },
                 { from: "src/assets/logo.svg", to: "assets/img/logo.svg" },
             ],
+        }),
+        new WorkboxPlugin.GenerateSW({
+            clientsClaim: true,
+            skipWaiting: true,
         }),
     ],
     module: {
@@ -68,7 +72,7 @@ module.exports = {
                 test: /\.(ico|png|jp?g|webp)$/,
                 type: "asset/resource",
                 generator: {
-                    filename: "assets/img/[name][ext][query]",
+                    filename: "assets/img/[name][hash:8][ext][query]",
                 },
             },
             {
@@ -76,13 +80,6 @@ module.exports = {
                 type: "asset/resource",
                 generator: {
                     filename: "manifest.json",
-                },
-            },
-            {
-                test: /sw\.js$/,
-                type: "asset/resource",
-                generator: {
-                    filename: "sw.js",
                 },
             },
         ],
