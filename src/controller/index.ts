@@ -3,7 +3,7 @@ import { MainController } from "./Main";
 import { SettingsPopupController } from "./SettingsPopup";
 
 if ("serviceWorker" in navigator) {
-    void navigator.serviceWorker.register("../sw.js", { scope: "./" }).catch((err: Error) => {
+    void navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch((err: Error) => {
         console.error(err.message);
     });
 }
