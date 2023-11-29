@@ -2,10 +2,12 @@ import { ConfigModel } from "../models/Config";
 import { MainController } from "./Main";
 import { SettingsPopupController } from "./SettingsPopup";
 
+const subPath = window.location.pathname.split("/").slice(0, -1).join("/");
+
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker
-            .register("/service-worker.js")
+            .register(`${subPath}/service-worker.js`, { scope: `${subPath}/` })
             .then((registration) => {
                 console.log("SW registered: ", registration);
             })
