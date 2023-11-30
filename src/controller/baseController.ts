@@ -114,10 +114,16 @@ export abstract class BaseController<T> {
         return element;
     }
     public getPosition(): Promise<GeolocationPosition> {
-        return new Promise((resolve) => {
-            navigator.geolocation.getCurrentPosition((position) => {
-                resolve(position);
-            });
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve(position);
+                },
+                (err) => {
+                    console.error(`Geolocation failed: ${err.message}`);
+                    reject(err);
+                },
+            );
         });
     }
 }

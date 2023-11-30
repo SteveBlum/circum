@@ -1,0 +1,19 @@
+{
+    "name": "circum",
+    "short_name" : "circum",
+    "start_url": "index.html",
+    "description": "A simple page which rotates between multiple websites using iframes",
+    "scope" : "./",
+    "icons": [
+        {
+            "src": "./assets/img/logo.svg",
+            "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ],
+    "theme_color": "#000000",
+    "background_color": "#1e9600",
+    "orientation": "any",
+    "display": "standalone"
+ }
