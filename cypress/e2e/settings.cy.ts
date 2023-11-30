@@ -1,5 +1,6 @@
 describe("Settings popup", () => {
     beforeEach(() => {
+        cy.intercept("/service-worker.js", { body: undefined });
         cy.visit("http://localhost:8080");
         cy.get("#mainMenuButton").click();
         cy.get("#settingsButton").click();
