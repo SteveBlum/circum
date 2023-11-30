@@ -27,20 +27,36 @@ module.exports = {
                 },
             },
             js: {
-                filename: "assets/js/[name].[contenthash:8].js",
+                filename: "assets/js/[name].[contenthash:8].hashed.js",
             },
             css: {
-                filename: "assets/css/[name].[contenthash:8].css",
+                filename: "assets/css/[name].[contenthash:8].hashed.css",
             },
         }),
         new CopyPlugin({
-            patterns: [
-                { from: "src/assets/logo.svg", to: "assets/img/logo.svg" },
-            ],
+            patterns: [{ from: "src/assets/logo.svg", to: "assets/img/logo.svg" }],
         }),
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
-            skipWaiting: true,
+            skipWaiting: false,
+            runtimeCaching: [
+                {
+                    handler: "NetworkFirst",
+                    urlPattern: /\/$/,
+                },
+                {
+                    handler: "NetworkFirst",
+                    urlPattern: /index\.html$/,
+                },
+                {
+                    handler: "NetworkFirst",
+                    urlPattern: "/frames/clock.html",
+                },
+                {
+                    handler: "NetworkFirst",
+                    urlPattern: "/frames/weather.html",
+                },
+            ],
         }),
     ],
     module: {
@@ -64,7 +80,7 @@ module.exports = {
                         const srcPath = "css/fonts";
                         const regExp = new RegExp(`[\\\\/]?(?:${path.normalize(srcPath)}|node_modules)[\\\\/](.+?)$`);
                         const assetPath = path.dirname(regExp.exec(filename)[1].replace("@", "").replace(/\\/g, "/"));
-                        return `assets/fonts/${assetPath}/[name][ext][query]`;
+                        return `assets/fonts/${assetPath}/[name].[contenthash:8].hashed[ext][query]`;
                     },
                 },
             },
@@ -72,7 +88,7 @@ module.exports = {
                 test: /\.(ico|png|jp?g|webp)$/,
                 type: "asset/resource",
                 generator: {
-                    filename: "assets/img/[name][hash:8][ext][query]",
+                    filename: "assets/img/[name].[contenthash:8].hashed[ext][query]",
                 },
             },
             {
