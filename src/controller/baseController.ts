@@ -123,6 +123,7 @@ export abstract class BaseController<T> {
                     console.error(`Geolocation failed: ${err.message}`);
                     reject(err);
                 },
+                { enableHighAccuracy: true },
             );
         });
     }
