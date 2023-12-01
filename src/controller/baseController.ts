@@ -1,4 +1,17 @@
 type eventFunction = (event: Event) => void;
+interface IPInfo {
+    ip: string;
+    hostname: string;
+    city: string;
+    region: string;
+    country: string;
+    loc: string;
+    org: string;
+    postal: string;
+    timezone: string;
+    readme: string;
+}
+
 export interface ControllerElement {
     get: () => HTMLElement;
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLElement;
@@ -27,6 +40,7 @@ export interface ControllerElementsTyped<K extends keyof HTMLElementTagNameMap> 
 }
 export abstract class BaseController<T> {
     public abstract refresh(): Promise<void>;
+    private ipInfoPosition: undefined | GeolocationPosition = undefined;
     protected abstract refreshView(data: T | Error): void;
     public element(id: string): ControllerElement {
         return {
@@ -114,17 +128,64 @@ export abstract class BaseController<T> {
         return element;
     }
     public getPosition(): Promise<GeolocationPosition> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     resolve(position);
                 },
                 (err) => {
                     console.error(`Geolocation failed: ${err.message}`);
-                    reject(err);
+                    resolve(this.getIPPosition());
                 },
-                { enableHighAccuracy: true },
+                { enableHighAccuracy: true, timeout: 5000 },
             );
         });
+    }
+    /* istanbul ignore next */
+    get ipInfo(): Promise<Response> {
+        return fetch("https://ipinfo.io/json");
+    }
+    protected async getIPPosition(): Promise<GeolocationPosition> {
+        // Due to rate limiting by IPInfo, we should do this only once
+        if (this.ipInfoPosition) return this.ipInfoPosition;
+        const ipInfo = await this.ipInfo
+            .then(async (res) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                const parsedRes = await res.json();
+                BaseController.assertIsIPInfo(parsedRes);
+                return parsedRes;
+            })
+            .catch((err: Error) => {
+                console.error(`Geolocation over IP address failed: ${err.message}`);
+                throw err;
+            });
+        this.ipInfoPosition = BaseController.ipInfoToGeolocationPosition(ipInfo);
+        return this.ipInfoPosition;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private static assertIsIPInfo(value: any): asserts value is IPInfo {
+        if (
+            !("ip" in value) ||
+            !("hostname" in value) ||
+            !("city" in value) ||
+            !("country" in value) ||
+            !("loc" in value)
+        ) {
+            throw new Error(`Couldn't parse IP Info response`);
+        }
+    }
+    private static ipInfoToGeolocationPosition(ipInfo: IPInfo): GeolocationPosition {
+        return {
+            coords: {
+                accuracy: NaN,
+                altitude: NaN,
+                altitudeAccuracy: NaN,
+                heading: NaN,
+                latitude: Number(ipInfo.loc.split(",")[0]),
+                longitude: Number(ipInfo.loc.split(",")[1]),
+                speed: NaN,
+            },
+            timestamp: new Date().getTime(),
+        };
     }
 }
