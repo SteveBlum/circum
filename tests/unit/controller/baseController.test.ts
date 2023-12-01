@@ -7,15 +7,35 @@ describe("Base Controller", () => {
     class TestController extends BaseController<boolean> {
         public refresh = mockRefresh;
         protected refreshView = jest.fn();
+        get ipInfo(): Promise<Response> {
+            return new Promise((resolve) => {
+                resolve({
+                    json: () => {
+                        return {
+                            ip: "1.1.1.1",
+                            hostname: "something.host.com",
+                            city: "someCity",
+                            region: "someState",
+                            country: "DE",
+                            loc: "51.2,45.3",
+                            org: "SomeCompany",
+                            postal: "123456",
+                            timezone: "Europe/Berlin",
+                            readme: "https://ipinfo.io/missingauth",
+                        };
+                    },
+                } as unknown as Response);
+            });
+        }
     }
-    beforeAll(() => {
+    beforeEach(() => {
         const mockGeolocation: Geolocation = {
             getCurrentPosition: jest.fn().mockImplementation((success) => {
                 success({
                     timestamp: 1,
                     coords: {
                         latitude: 51.1,
-                        longitude: 45.3,
+                        longitude: 45.4,
                         accuracy: 1,
                         altitude: 1,
                         altitudeAccuracy: 1,
@@ -36,6 +56,116 @@ describe("Base Controller", () => {
             const res = await controller.getPosition();
             expect(res).toHaveProperty("coords");
             expect(res.coords.latitude).toBe(51.1);
+        });
+        it("In case geolocation request failed, returns position based on IP", async () => {
+            // First making sure that the Geolocation request will actually fail
+            const mockGeolocationFailing: Geolocation = {
+                getCurrentPosition: jest.fn().mockImplementation((success, err) => {
+                    err(new Error("Something didn't work"));
+                }),
+                watchPosition: jest.fn(),
+                clearWatch: jest.fn(),
+            };
+            // @ts-expect-error because
+            navigator.geolocation = mockGeolocationFailing;
+            const res = await controller.getPosition();
+            expect(res).toHaveProperty("coords");
+            expect(res.coords.latitude).toBe(51.2);
+        });
+        it("In case both geolocation and IP-based location request failed, throws error", async () => {
+            // First making sure that the Geolocation request will actually fail
+            const mockGeolocationFailing: Geolocation = {
+                getCurrentPosition: jest.fn().mockImplementation((success, err) => {
+                    err(new Error("Something didn't work"));
+                }),
+                watchPosition: jest.fn(),
+                clearWatch: jest.fn(),
+            };
+            // @ts-expect-error because
+            navigator.geolocation = mockGeolocationFailing;
+            class TestController2 extends TestController {
+                get ipInfo(): Promise<Response> {
+                    return new Promise((resolve, reject) => {
+                        reject(new Error("Test"));
+                    });
+                }
+            }
+            controller = new TestController2();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            await expect(controller.getPosition()).rejects.toThrow("Test");
+        });
+        it("In case geolocation fails and IP-based location request responds with incorrect data structure, throws error", async () => {
+            // First making sure that the Geolocation request will actually fail
+            const mockGeolocationFailing: Geolocation = {
+                getCurrentPosition: jest.fn().mockImplementation((success, err) => {
+                    err(new Error("Something didn't work"));
+                }),
+                watchPosition: jest.fn(),
+                clearWatch: jest.fn(),
+            };
+            // @ts-expect-error because
+            navigator.geolocation = mockGeolocationFailing;
+            class TestController2 extends TestController {
+                get ipInfo(): Promise<Response> {
+                    return new Promise((resolve) => {
+                        resolve({
+                            json: () => {
+                                return {
+                                    a: 1,
+                                };
+                            },
+                        } as unknown as Response);
+                    });
+                }
+            }
+            controller = new TestController2();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            await expect(controller.getPosition()).rejects.toThrow("Couldn't parse IP Info response");
+        });
+        it("IP-based location request is only done once, the result is the re-used", async () => {
+            // First making sure that the Geolocation request will actually fail
+            const mockGeolocationFailing: Geolocation = {
+                getCurrentPosition: jest.fn().mockImplementation((success, err) => {
+                    err(new Error("Something didn't work"));
+                }),
+                watchPosition: jest.fn(),
+                clearWatch: jest.fn(),
+            };
+            // @ts-expect-error because
+            navigator.geolocation = mockGeolocationFailing;
+            Object.defineProperty(controller, "ipInfo", {
+                get: jest
+                    .fn()
+                    .mockImplementationOnce(() => {
+                        return new Promise((resolve) => {
+                            resolve({
+                                json: () => {
+                                    return {
+                                        ip: "1.1.1.1",
+                                        hostname: "something.host.com",
+                                        city: "someCity",
+                                        region: "someState",
+                                        country: "DE",
+                                        loc: "51.2,45.3",
+                                        org: "SomeCompany",
+                                        postal: "123456",
+                                        timezone: "Europe/Berlin",
+                                        readme: "https://ipinfo.io/missingauth",
+                                    };
+                                },
+                            } as unknown as Response);
+                        });
+                    })
+                    .mockImplementationOnce(() => {
+                        return new Promise((resolve, reject) => {
+                            reject(new Error("Test"));
+                        });
+                    }),
+            });
+            await controller.getPosition();
+            const res = await controller.getPosition();
+            expect(res).toHaveProperty("coords");
+            expect(res.coords.latitude).toBe(51.2);
         });
     });
     describe("element", () => {
