@@ -57,6 +57,7 @@ module.exports = {
                     urlPattern: "/frames/weather.html",
                 },
             ],
+            exclude: [/index\.html$/, /clock\.html$/, /weather\.html$/],
         }),
     ],
     module: {
