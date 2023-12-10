@@ -1,4 +1,5 @@
 import { ConfigModel, Settings } from "../models/Config";
+import { CustomToast } from "./Toast";
 import { BaseController, ControllerElementTyped } from "./baseController";
 
 export class SettingsPopupController extends BaseController<Settings> {
@@ -16,6 +17,11 @@ export class SettingsPopupController extends BaseController<Settings> {
     set config(newConfig: Settings) {
         ConfigModel.config = newConfig;
         this.loading = this.refresh();
+        try {
+            localStorage.setItem("config", JSON.stringify(this.config));
+        } catch {
+            // Do nothing, this is allowed to fail
+        }
     }
     get config(): Settings {
         return ConfigModel.config;
@@ -53,11 +59,41 @@ export class SettingsPopupController extends BaseController<Settings> {
         });
         this.saveConfigButton.addListener("click", () => {
             this.config = structuredClone(this.unsavedConfig);
-            try {
-                localStorage.setItem("config", JSON.stringify(this.config));
-            } catch {
-                // Do nothing, this is allowed to fail
+        });
+        this.importConfigButton.addListener("click", () => {
+            this.importConfigInput.get().click();
+        });
+        this.importConfigInput.addListener("change", (event) => {
+            const timeToNormalError = 30000;
+            const timeToNormalSuccess = 10000;
+            const target = event.target as HTMLInputElement;
+            this.importConfigButton.triggerState("Loading");
+            if (!target.files || target.files.length !== 1) {
+                this.importConfigButton.triggerState("Error", timeToNormalError);
+                return;
             }
+            this.loading = target.files[0]
+                .text()
+                .then((rawConfig) => {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    const config = JSON.parse(rawConfig);
+                    ConfigModel.assertIsSettings(config);
+                    this.unsavedConfig = structuredClone(config);
+                    this.config = structuredClone(config);
+                    this.refreshView(this.unsavedConfig);
+                    this.importConfigButton.triggerState("Success", timeToNormalSuccess);
+                    new CustomToast("success", "Import of settings was successful", "Settings import", "Success");
+                })
+                .catch((err: Error) => {
+                    console.error(err.message);
+                    new CustomToast(
+                        "error",
+                        "The uploaded file doesn't contain the expected settings structure. Use the settings Export to get a correct template.",
+                        "Settings import",
+                        "Error occured",
+                    );
+                    this.importConfigButton.triggerState("Error", timeToNormalError);
+                });
         });
         this.useGlobalRotationRateCheckBox.addListener("click", () => {
             this.unsavedConfig.useGlobalRotationRate = !this.unsavedConfig.useGlobalRotationRate;
@@ -73,6 +109,9 @@ export class SettingsPopupController extends BaseController<Settings> {
         this.updateUseGlobalRotationRate();
         this.updateRotationRate();
         this.updateFrameItems();
+
+        const data_string = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+        this.exportConfigButton.get().setAttribute("href", data_string);
     }
     private updateUseGlobalRotationRate(): void {
         this.useGlobalRotationRateCheckBox.get().checked = this.unsavedConfig.useGlobalRotationRate;
@@ -242,6 +281,15 @@ export class SettingsPopupController extends BaseController<Settings> {
     }
     get rotationRateText(): HTMLParagraphElement {
         return this.typedElement("rotationRate", "p").get();
+    }
+    get exportConfigButton(): ControllerElementTyped<"a"> {
+        return this.typedElement("exportConfigButton", "a");
+    }
+    get importConfigButton(): ControllerElementTyped<"button"> {
+        return this.typedElement("importConfigButton", "button");
+    }
+    get importConfigInput(): ControllerElementTyped<"input"> {
+        return this.typedElement("importConfigInput", "input");
     }
     private updateRefreshRate(): void {
         const value = this.unsavedConfig.refreshRate;

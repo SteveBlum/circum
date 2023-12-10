@@ -12,10 +12,22 @@ interface IPInfo {
     readme: string;
 }
 
+const states = ["Loading", "Success", "Error", "Normal"] as const;
+type State = (typeof states)[number];
+
+function containsState(value: string): boolean {
+    return (
+        states.find((state) => {
+            return value.toLowerCase().includes(state.toLowerCase());
+        }) !== undefined
+    );
+}
+
 export interface ControllerElement {
     get: () => HTMLElement;
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLElement;
     remove: () => void;
+    triggerState: (state: State, timeToNormalMS?: number) => void;
 }
 
 export interface ControllerElements {
@@ -28,6 +40,7 @@ export interface ControllerElementTyped<K extends keyof HTMLElementTagNameMap> {
     get: () => HTMLElementTagNameMap[K];
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLElementTagNameMap[K];
     remove: () => void;
+    triggerState: (state: State, timeToNormalMS?: number) => void;
 }
 
 export interface ControllerElementsTyped<K extends keyof HTMLElementTagNameMap> {
@@ -55,6 +68,9 @@ export abstract class BaseController<T> {
             remove: (): void => {
                 const element = this.element(id).get();
                 element.remove();
+            },
+            triggerState: (state: State, timeToNormalMS = 0): void => {
+                this.triggerState(state, this.element(id).get(), timeToNormalMS);
             },
         };
     }
@@ -94,6 +110,9 @@ export abstract class BaseController<T> {
             remove: (): void => {
                 const element = this.typedElement(id, type).get();
                 element.remove();
+            },
+            triggerState: (state: State, timeToNormalMS = 0): void => {
+                this.triggerState(state, this.typedElement(id, type).get(), timeToNormalMS);
             },
         };
     }
@@ -161,6 +180,21 @@ export abstract class BaseController<T> {
             });
         this.ipInfoPosition = BaseController.ipInfoToGeolocationPosition(ipInfo);
         return this.ipInfoPosition;
+    }
+    private triggerState(state: State, element: HTMLElement, timeToNormalMS = 0): void {
+        const children = element.children;
+        Array.from(children).forEach((child) => {
+            if (child.id && child.id.toLowerCase().includes(state.toLowerCase())) {
+                child.removeAttribute("hidden");
+            } else if (containsState(child.id)) {
+                child.setAttribute("hidden", "true");
+            }
+        });
+        if (timeToNormalMS > 0) {
+            setTimeout(() => {
+                this.triggerState("Normal", element);
+            }, timeToNormalMS);
+        }
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private static assertIsIPInfo(value: any): asserts value is IPInfo {

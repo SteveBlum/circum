@@ -64,7 +64,7 @@ export class ConfigModel extends Model<Settings> {
         }
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private static assertIsSettings(value: any): asserts value is Settings {
+    public static assertIsSettings(value: any): asserts value is Settings {
         if (
             !("sites" in value) ||
             !("rotationRate" in value) ||
