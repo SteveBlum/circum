@@ -62,7 +62,15 @@
 			</div>
 			<div class="modal-footer">
 				<button id="discardConfigButton" type="button" class="btn btn-secondary float-start" data-bs-dismiss="modal">Close</button>
-				<button id="saveConfigButton" type="button" class="btn btn-primary float-end" data-bs-dismiss="modal">Save</button>
+				<a id="exportConfigButton" class="btn btn-outline-primary" role="button" download="settings.json"><i class="bi bi-download"></i> Export</a>
+				<input id="importConfigInput" class="d-none" type="file" />
+				<button id="importConfigButton" class="btn btn-outline-primary">
+					<i id= "importConfigButton-normal" class="bi bi-upload"></i>
+					<span id="importConfigButton-loading" hidden="true" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+					<span id="importConfigButton-loading" hidden="true" class="visually-hidden" role="status">Loading...</span>
+					<i id="importConfigButton-success" hidden="true" class="bi bi-check-circle-fill text-success"></i>
+					<i id="importConfigButton-error" hidden="true" class="bi bi-x-circle-fill text-danger"></i> Import</button>
+				<button id="saveConfigButton" type="button" class="btn btn-primary float-end" data-bs-dismiss="modal"><i class="bi bi-floppy"></i> Save</button>
 			</div>
 		</div>
 	</div>

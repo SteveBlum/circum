@@ -51,6 +51,9 @@ describe("Settings Popup Controller", () => {
             "</tr></thead><tbody></tbody></table>" +
             '<button id="discardConfigButton" type="button">Close</button>' +
             '<button id="saveConfigButton" type="button">Save</button>' +
+            '<a id="exportConfigButton" role="button" download="settings.json">Export</a>' +
+            '<input id="importConfigInput" type="file" />' +
+            '<button id="importConfigButton"><p id="import-error" hidden="true"/><p id="import-success" hidden="true"/>Upload</button>' +
             '<button id="addFrameButton" type="button"></button>';
         controller = new TestController(configModel);
     });
@@ -451,6 +454,58 @@ describe("Settings Popup Controller", () => {
             rotationRateInput?.dispatchEvent(new Event("input"));
             await controller.loading;
             expect(controller.unsavedConfigObject.sites[0].rotationRate).toBe(70);
+        });
+        it("Clicking import Config button just triggers the hidden import config input", () => {
+            const spy = jest.fn();
+            controller.addListenerOriginal();
+            controller.importConfigInput.get().addEventListener("click", spy);
+            expect(spy).toHaveBeenCalledTimes(0);
+            controller.importConfigButton.get().click();
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        it("importConfigInput: Applies settings when triggered with compatible file", async () => {
+            controller.addListenerOriginal();
+            jest.spyOn(controller.importConfigInput.get(), "files", "get").mockReturnValue({
+                0: {
+                    text: async () => {
+                        return Promise.resolve(
+                            '{"sites":[{"url":"./frames/clock.html","rotationRate":75},{"url":"./frames/weather.html","rotationRate":75}],"useGlobalRotationRate":true,"rotationRate":75,"refreshRate":600}',
+                        );
+                    },
+                } as unknown as File,
+                length: 1,
+                item: (index: number) => {
+                    throw new Error(index.toString());
+                },
+            } as unknown as FileList);
+            controller.importConfigInput.get().dispatchEvent(new Event("change"));
+            await controller.loading;
+            const successElement = document.getElementById("import-success");
+            expect(successElement?.hidden).toBe(false);
+        });
+        it("importConfigInput: Fails in case of incompatible settings file content", async () => {
+            controller.addListenerOriginal();
+            jest.spyOn(controller.importConfigInput.get(), "files", "get").mockReturnValue({
+                0: {
+                    text: async () => {
+                        return Promise.resolve('{"property": "value"}');
+                    },
+                } as unknown as File,
+                length: 1,
+                item: (index: number) => {
+                    throw new Error(index.toString());
+                },
+            } as unknown as FileList);
+            controller.importConfigInput.get().dispatchEvent(new Event("change"));
+            await controller.loading;
+            const errorElement = document.getElementById("import-error");
+            expect(errorElement?.hidden).toBe(false);
+        });
+        it("importConfigInput: Importing without having provided a file will fail", () => {
+            controller.addListenerOriginal();
+            controller.importConfigInput.get().dispatchEvent(new Event("change"));
+            const errorElement = document.getElementById("import-error");
+            expect(errorElement?.hidden).toBe(false);
         });
     });
     describe("getTableColumnIndex", () => {

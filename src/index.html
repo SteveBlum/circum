@@ -10,7 +10,8 @@
 		<link rel="stylesheet" href="./views/css/custom.css" >
 		<link rel="shortcut icon" href="./assets/favicon.ico">
 		<link rel="manifest" href="./manifest.json">
-		<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+		<!-- For reasons that I currently don't fully understand, once you have imported bootstrap in javascript, this "additional" import right here will cause every bootstrap event to trigger twice-->
+		<!-- <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script> -->
 	</head>
 
 	<body>

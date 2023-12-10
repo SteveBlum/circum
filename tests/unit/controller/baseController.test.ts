@@ -2,6 +2,7 @@
 import { BaseController } from "../../../src/controller/baseController";
 
 describe("Base Controller", () => {
+    jest.useFakeTimers();
     const mockRefresh: () => Promise<void> = jest.fn();
     let controller: TestController;
     class TestController extends BaseController<boolean> {
@@ -175,6 +176,7 @@ describe("Base Controller", () => {
                 '<div class="d-flex flex-column mr-3">' +
                 '<h2 id="location" class="mt-3 mb-0 green-font">--</h2>' +
                 '<small id="lastUpdated" class="green-font">--</small>' +
+                '<div id="stateExample"><p id="state-Normal" /><p id="state-Normal-hidden" hidden="true" /><p id="not-a-state" /><p id="state-Success" hidden="true" /><p id="state-Success2" hidden="true" /><p id="state-sUcCeSs" hidden="true" /><p id="state-Error" hidden="true" /><p id="state-Loading" hidden="true" /></div>' +
                 "</div>";
         });
         it("get - Returns existing HTML element", () => {
@@ -204,6 +206,61 @@ describe("Base Controller", () => {
             controller.element("temperature").remove();
             const element = document.getElementById("temperature");
             expect(element).toBe(null);
+        });
+        it("triggerState - un-hides single child element containing the name of the state", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element = document.getElementById("state-Success");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - un-hides multiple child elements containing the name of the state", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element1 = document.getElementById("state-Success");
+            const element2 = document.getElementById("state-Success2");
+            expect(element1?.hidden).toBe(false);
+            expect(element2?.hidden).toBe(false);
+        });
+        it("triggerState - ignores capitalization when identifying child-elements", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element = document.getElementById("state-sUcCeSs");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - hides child elements which match other states", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element = document.getElementById("state-Normal");
+            expect(element?.hidden).toBe(true);
+        });
+        it("triggerState - ignores child elements which don't match any state name", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element = document.getElementById("not-a-state");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - works for success state", () => {
+            controller.element("stateExample").triggerState("Success");
+            const element = document.getElementById("state-Success");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - works for loading state", () => {
+            controller.element("stateExample").triggerState("Loading");
+            const element = document.getElementById("state-Loading");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - works for error state", () => {
+            controller.element("stateExample").triggerState("Error");
+            const element = document.getElementById("state-Error");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - works for normal state", () => {
+            controller.element("stateExample").triggerState("Normal");
+            const element = document.getElementById("state-Normal-hidden");
+            expect(element?.hidden).toBe(false);
+        });
+        it("triggerState - optionally will trigger normal state after given time", () => {
+            controller.element("stateExample").triggerState("Error", 1000);
+            let element = document.getElementById("state-Normal");
+            expect(element?.hidden).toBe(true);
+            jest.runAllTimers();
+            element = document.getElementById("state-Normal");
+            expect(element?.hidden).toBe(false);
         });
     });
     describe("elements", () => {
@@ -264,6 +321,7 @@ describe("Base Controller", () => {
                 '<div class="d-flex flex-column mr-3">' +
                 '<h2 id="location" class="mt-3 mb-0 green-font">--</h2>' +
                 '<small id="lastUpdated" class="green-font">--</small>' +
+                '<div id="stateExample"><p id="state-Normal" /><p id="state-Normal-hidden" hidden="true" /><p id="not-a-state" /><p id="state-Success" hidden="true" /><p id="state-Success2" hidden="true" /><p id="state-sUcCeSs" hidden="true" /><p id="state-Error" hidden="true" /><p id="state-Loading" hidden="true" /></div>' +
                 "</div>";
         });
         it("get - Returns existing HTML element", () => {
@@ -293,6 +351,12 @@ describe("Base Controller", () => {
             controller.typedElement("temperature", "h1").remove();
             const element = document.getElementById("temperature");
             expect(element).toBe(null);
+        });
+        // rest of the triggerState tests can be found in test block "element"
+        it("triggerState - un-hides single child element containing the name of the state", () => {
+            controller.typedElement("stateExample", "div").triggerState("Success");
+            const element = document.getElementById("state-Success");
+            expect(element?.hidden).toBe(false);
         });
     });
     describe("typedElements", () => {
