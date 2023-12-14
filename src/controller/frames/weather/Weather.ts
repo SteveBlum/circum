@@ -20,7 +20,7 @@ const defaultConfig: WeatherConfig = {
 type CardinalDirection = "North" | "Northeast" | "East" | "Southeast" | "South" | "Southwest" | "West" | "Northwest";
 
 export class WeatherController extends BaseController<V1ForecastGet200Response> {
-    protected _model: Model<V1ForecastGet200Response>;
+    protected _model: Model<() => Promise<V1ForecastGet200Response>>;
     private position: GeolocationPosition | undefined = undefined;
     private weatherCodes: WeatherCode[] = [
         {
@@ -186,7 +186,7 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
     public async refresh(): Promise<void> {
         return this._model.refresh();
     }
-    get model(): Model<V1ForecastGet200Response> {
+    get model(): Model<() => Promise<V1ForecastGet200Response>> {
         return this._model;
     }
     private findWeatherCode(code: number): WeatherCode | undefined {

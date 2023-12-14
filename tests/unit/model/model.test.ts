@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Model } from "../../../src/models/model";
+import { GetterFunction, Model } from "../../../src/models/model";
 
 describe("Model class", () => {
     describe("Getter and Setter", () => {
@@ -39,7 +39,7 @@ describe("Model class", () => {
     });
     describe("Listener", () => {
         let getData: () => Promise<boolean>;
-        let model: Model<boolean>;
+        let model: Model<() => Promise<boolean>>;
         beforeEach(() => {
             getData = (): Promise<boolean> => Promise.resolve(true);
             model = new Model(getData);
@@ -109,6 +109,42 @@ describe("Model class", () => {
             const model = new Model(getData);
             const res = await model.data;
             expect(res instanceof Error).toBe(true);
+        });
+    });
+    describe("executeGetData", () => {
+        class CustomModel<T extends GetterFunction<ReturnType<T>>> extends Model<T> {
+            public executeGetData = super.executeGetData.bind(this);
+        }
+        it("Returns result of synchrounous functions", () => {
+            const model = new CustomModel(() => true);
+            expect(model.executeGetData()).toBe(true);
+        });
+        it("Returns error in case of failing synchrounous functions", () => {
+            const model = new CustomModel((blah = "blah") => {
+                if (blah === "") {
+                    return "something";
+                }
+                throw new Error("Test");
+            });
+            expect((model.executeGetData() as Error).message).toBe("Test");
+        });
+        it("Returns error in case of incorrectly failing synchrounous functions", () => {
+            const model = new CustomModel((blah = "blah") => {
+                if (blah === "") {
+                    return "something";
+                }
+                // eslint-disable-next-line @typescript-eslint/no-throw-literal
+                throw "Test";
+            });
+            expect((model.executeGetData() as Error).message).toBe("Unknown error occured");
+        });
+        it("Returns result of asynchrounous functions", async () => {
+            const model = new CustomModel(() => Promise.resolve(true));
+            expect(await model.executeGetData()).toBe(true);
+        });
+        it("Returns error in case of rejected asynchrounous function", async () => {
+            const model = new CustomModel(() => Promise.reject(new Error("Test")));
+            expect((await model.executeGetData()).message).toBe("Test");
         });
     });
 });
