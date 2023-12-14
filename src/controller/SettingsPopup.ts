@@ -15,7 +15,7 @@ export class SettingsPopupController extends BaseController<Settings> {
         this.loading = this.refresh();
     }
     set config(newConfig: Settings) {
-        ConfigModel.config = newConfig;
+        this._model.config = newConfig;
         this.loading = this.refresh();
         try {
             localStorage.setItem("config", JSON.stringify(this.config));
@@ -24,7 +24,7 @@ export class SettingsPopupController extends BaseController<Settings> {
         }
     }
     get config(): Settings {
-        return ConfigModel.config;
+        return this._model.config;
     }
     protected addListener(): void {
         this.modal.addListener("show.bs.modal", () => {

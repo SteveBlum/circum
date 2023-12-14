@@ -22,29 +22,27 @@ export interface Settings {
     refreshRate: number;
 }
 
-export class ConfigModel extends Model<Settings> {
-    protected static _config: Settings | undefined;
+export class ConfigModel extends Model<() => Settings> {
     constructor() {
-        super(ConfigModel.getConfig.bind(ConfigModel));
+        super(ConfigModel.getterFunction(ConfigModel.load()));
     }
-    protected static getConfig(): Promise<Settings> {
-        return Promise.resolve(ConfigModel.config);
+    protected static getterFunction(config: Settings): () => Settings {
+        return () => config;
     }
-    public static reset(): void {
-        this._config = undefined;
-    }
-    static get config(): Settings {
-        if (!ConfigModel._config) {
-            ConfigModel._config = ConfigModel.load();
+    get config(): Settings {
+        // The getter function of this class really can't fail
+        /* istanbul ignore next */
+        if (this.data instanceof Error) {
+            throw this.data;
         }
-        return ConfigModel._config;
+        return this.data;
     }
-    static set config(data: Settings) {
-        this._config = data;
+    set config(data: Settings) {
+        this.getData = ConfigModel.getterFunction(data);
     }
     public save(): void {
         try {
-            localStorage.setItem("config", JSON.stringify(ConfigModel.config));
+            localStorage.setItem("config", JSON.stringify(this.config));
         } catch {
             // Do nothing, this is allowed to fail
         }

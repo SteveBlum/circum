@@ -20,7 +20,7 @@ const defaultConfig: ClockConfig = {
 };
 
 export class ClockController extends BaseController<ClockConfig> {
-    protected _model: Model<ClockConfig>;
+    protected _model: Model<() => Promise<ClockConfig>>;
     protected config: ClockConfig;
     protected interval: NodeJS.Timer | undefined;
     private canvasID = "canvas";

@@ -1,17 +1,21 @@
-type Callback<T> = (data: T | Error) => void;
+export type CallbackParameter<T> = Awaited<T> | Error;
+export type Callback<T> = (data: CallbackParameter<T>) => void;
+export type GetterFunction<T> = () => T;
+export type GetterFunctionReturn<T> = T extends Promise<infer P> ? Promise<P | Error> : T | Error;
 
 interface Listener<T> {
     id: number;
     callback: Callback<T>;
 }
 
-export class Model<T> {
-    protected _data: Promise<Error | T>;
-    protected _getData: () => Promise<T>;
+export class Model<T extends GetterFunction<ReturnType<T>>> {
+    protected _data: GetterFunctionReturn<ReturnType<T>>;
+    protected _getData: GetterFunction<ReturnType<T>>;
+    public loading: Promise<void>;
     private id = 0;
-    protected _listeners: Listener<T>[] = [];
+    protected _listeners: Listener<ReturnType<T>>[] = [];
     public listener = {
-        add: (callback: Callback<T>): number => {
+        add: (callback: Callback<ReturnType<T>>): number => {
             this.id++;
             this._listeners.push({ id: this.id, callback: callback });
             return this.id;
@@ -25,8 +29,9 @@ export class Model<T> {
             }
         },
         trigger: async (): Promise<void> => {
-            const data = await this.data;
+            const data = this.data instanceof Promise ? await this.data : this.data;
             this._listeners.forEach((listener) => {
+                //@ts-expect-error Because
                 listener.callback(data);
             });
         },
@@ -34,25 +39,45 @@ export class Model<T> {
             return this._listeners.length;
         },
     };
-    constructor(getData: () => Promise<T>, callback?: Callback<T>) {
+
+    constructor(getData: T, callback?: Callback<ReturnType<T>>) {
         if (callback) {
             this.listener.add(callback);
         }
         this._getData = getData;
-        this._data = this._getData().catch((err: Error) => {
-            return err;
-        });
-        void this.listener.trigger();
+        this._data = this.executeGetData();
+        this.loading = this.refresh();
     }
     public async refresh(): Promise<void> {
-        this._data = this._getData();
+        this._data = this.executeGetData();
         return this.listener.trigger();
     }
-    set getData(getData: () => Promise<T>) {
+    protected executeGetData(): GetterFunctionReturn<ReturnType<T>> {
+        let tempData: ReturnType<T> | Error = new Error("Function wasn't executed");
+        try {
+            tempData = this._getData();
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                tempData = err;
+            } else {
+                tempData = new Error("Unknown error occured");
+            }
+        }
+        if (tempData instanceof Promise) {
+            //@ts-expect-error Because
+            return tempData.catch((err: Error) => {
+                return err;
+            });
+        } else {
+            //@ts-expect-error Because
+            return tempData;
+        }
+    }
+    set getData(getData: GetterFunction<ReturnType<T>>) {
         this._getData = getData;
         void this.refresh();
     }
-    get data(): Promise<T | Error> {
+    get data(): GetterFunctionReturn<ReturnType<T>> {
         return this._data;
     }
 }

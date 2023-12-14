@@ -131,7 +131,7 @@ describe("Weather Frame Controller", () => {
         class TestController extends WeatherController {
             constructor() {
                 super();
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 this._model = new Model(this.getData.bind(this), this.refreshView.bind(this));
             }
             public getData = mockGetData;
@@ -140,10 +140,10 @@ describe("Weather Frame Controller", () => {
         it("Uses model to request new data", async () => {
             expect(mockGetData).toBeCalledTimes(0);
             controller = new TestController();
-            // Triggered by constructor
-            expect(mockGetData).toBeCalledTimes(1);
-            await controller.refresh();
+            // Triggered by constructor twice
             expect(mockGetData).toBeCalledTimes(2);
+            await controller.refresh();
+            expect(mockGetData).toBeCalledTimes(3);
             const res = await controller.model.data;
             expect((res as V1ForecastGet200Response).current?.temperature2m).toBe(23);
         });

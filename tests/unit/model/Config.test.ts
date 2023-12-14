@@ -2,9 +2,6 @@
 import { defaults, ConfigModel, Settings } from "../../../src/models/Config";
 
 describe("Config Model class", () => {
-    afterEach(() => {
-        ConfigModel.reset();
-    });
     describe("Save", () => {
         it("Saves to localStorage", () => {
             const model = new ConfigModel();
@@ -32,7 +29,7 @@ describe("Config Model class", () => {
             localStorage.setItem("config", '{ "someValue": 20}');
             expect(ConfigModel.load()).toStrictEqual(defaults);
         });
-        it("Non-default config is immediately loaded", async () => {
+        it("Non-default config is immediately loaded", () => {
             localStorage.setItem(
                 "config",
                 JSON.stringify({
@@ -43,7 +40,7 @@ describe("Config Model class", () => {
                 }),
             );
             const model = new ConfigModel();
-            const res = await model.data;
+            const res = model.data;
             expect((res as Settings).refreshRate).toBe(700);
         });
     });
