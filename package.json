@@ -1,10 +1,11 @@
 {
   "name": "circum",
-  "version": "0.1.0",
+  "version": "0.4.0-alpha",
   "description": "A simple page which rotates between multiple websites using iframes",
   "main": "index.js",
   "homepage": "https://github.com/SteveBlum/circum",
   "scripts": {
+    "prebuild": "node -p \"JSON.stringify(require('./package.json').version).replace(/\\\"/g, '')\" > src/views/partials/Version.html",
     "build": "npm run build:webpack",
     "build:transpile": "tsc --build",
     "build:webpack": "webpack --config webpack.prod.js",
@@ -16,8 +17,8 @@
     "eslint:fix": "eslint --format html --output-file ./reports/eslint-report.html --fix .",
     "weather:generateClientWeb": "openapi-generator-cli generate -i https://raw.githubusercontent.com/open-meteo/open-meteo/main/openapi.yml -g typescript -o ./src/controller/frames/weather/open-meteo-client",
     "weather:generateClientLocal": "openapi-generator-cli generate -i ./src/controller/frames/weather/openapi.json -g typescript -o ./src/controller/frames/weather/open-meteo-client",
-    "start": "webpack serve --config webpack.prod.js",
-    "start:dev": "webpack serve --config webpack.dev.js",
+    "start": "npm run prebuild && webpack serve --config webpack.prod.js",
+    "start:dev": "npm run prebuild && webpack serve --config webpack.dev.js",
     "test": "jest --coverage",
     "test:watch": "npm run test -- --watch"
   },
