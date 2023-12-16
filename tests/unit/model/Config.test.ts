@@ -13,7 +13,7 @@ describe("Config Model class", () => {
         it("Returns saved config from localStorage", () => {
             localStorage.setItem(
                 "config",
-                '{"sites":[{"url":"./frames/clock.html","rotationRate":60},{"url":"./frames/weather.html","rotationRate":60}],"useGlobalRotationRate":true,"rotationRate":60,"refreshRate":6000}',
+                '{"sites":[{"url":"./frames/clock.html","rotationRate":60},{"url":"./frames/weather.html","rotationRate":60}],"useGlobalRotationRate":true,"rotationRate":60,"refreshRate":6000,"wakeLock":false}',
             );
             expect(ConfigModel.load().refreshRate).toBe(6000);
         });
@@ -37,6 +37,7 @@ describe("Config Model class", () => {
                     useGlobalRotationRate: true,
                     rotationRate: 70,
                     refreshRate: 700,
+                    wakeLock: false,
                 }),
             );
             const model = new ConfigModel();

@@ -10,6 +10,7 @@ const config: Settings = {
     useGlobalRotationRate: true,
     rotationRate: 60,
     refreshRate: 600,
+    wakeLock: false,
 };
 
 describe("Main Controller", () => {
@@ -76,6 +77,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 61,
                 refreshRate: 600,
+                wakeLock: false,
             };
             controller.refreshView(newConfig);
             expect(controller.config).toStrictEqual(controller.config);
@@ -86,6 +88,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 61,
                 refreshRate: 600,
+                wakeLock: false,
             };
             expect(controller.frames().count()).toBe(2);
             controller.refreshView(newConfig);
@@ -103,6 +106,50 @@ describe("Main Controller", () => {
                 controller.refreshView(new Error("Test"));
             }).toThrowError("Test");
         });
+        it("Activates wake lock if configured", () => {
+            const newConfig = {
+                sites: [{ url: "./frames/clock.html", rotationRate: 60 }],
+                useGlobalRotationRate: true,
+                rotationRate: 60,
+                refreshRate: 600,
+                wakeLock: true,
+            };
+            const mockWakeLockOn = jest.fn();
+            const mockWakeLockOff = jest.fn();
+            jest.spyOn(controller, "wakeLock", "get").mockImplementation(() => {
+                return {
+                    on: mockWakeLockOn,
+                    off: mockWakeLockOff,
+                    check: jest.fn(),
+                    compatible: jest.fn(),
+                };
+            });
+            controller.refreshView(newConfig);
+            expect(mockWakeLockOn).toHaveBeenCalledTimes(1);
+            expect(mockWakeLockOff).toHaveBeenCalledTimes(0);
+        });
+        it("Specifically de-activated wake lock if configured", () => {
+            const newConfig = {
+                sites: [{ url: "./frames/clock.html", rotationRate: 60 }],
+                useGlobalRotationRate: true,
+                rotationRate: 60,
+                refreshRate: 600,
+                wakeLock: false,
+            };
+            const mockWakeLockOn = jest.fn();
+            const mockWakeLockOff = jest.fn();
+            jest.spyOn(controller, "wakeLock", "get").mockImplementation(() => {
+                return {
+                    on: mockWakeLockOn,
+                    off: mockWakeLockOff,
+                    check: jest.fn(),
+                    compatible: jest.fn(),
+                };
+            });
+            controller.refreshView(newConfig);
+            expect(mockWakeLockOn).toHaveBeenCalledTimes(0);
+            expect(mockWakeLockOff).toHaveBeenCalledTimes(1);
+        });
     });
     describe("addListener", () => {
         beforeEach(() => {
@@ -115,6 +162,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 60,
                 refreshRate: 600,
+                wakeLock: false,
             };
             controller.addListenerOriginal();
         });
@@ -147,6 +195,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 70,
                 refreshRate: 610,
+                wakeLock: false,
             };
             controller = new TestController(configModel);
             controller.config = {
@@ -157,6 +206,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 60,
                 refreshRate: 600,
+                wakeLock: false,
             };
             controller.config = newConfig;
             expect(controller.config).toStrictEqual(newConfig);
@@ -178,6 +228,7 @@ describe("Main Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 60,
                 refreshRate: 600,
+                wakeLock: false,
             };
             expect(mockRefresh).toHaveBeenCalledTimes(2);
         });

@@ -10,6 +10,7 @@ const config: Settings = {
     useGlobalRotationRate: true,
     rotationRate: 60,
     refreshRate: 600,
+    wakeLock: false,
 };
 
 describe("Settings Popup Controller", () => {
@@ -54,7 +55,8 @@ describe("Settings Popup Controller", () => {
             '<a id="exportConfigButton" role="button" download="settings.json">Export</a>' +
             '<input id="importConfigInput" type="file" />' +
             '<button id="importConfigButton"><p id="import-error" hidden="true"/><p id="import-success" hidden="true"/>Upload</button>' +
-            '<button id="addFrameButton" type="button"></button>';
+            '<button id="addFrameButton" type="button"></button>' +
+            '<input class="form-check-input" type="checkbox" id="wakeLockCheckBox">';
         controller = new TestController(configModel);
     });
     describe("constructor", () => {
@@ -88,6 +90,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 61,
                 refreshRate: 601,
+                wakeLock: false,
             };
             controller.config = newConfig;
             const res = controller.config;
@@ -110,6 +113,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 60,
                 refreshRate: 600,
+                wakeLock: false,
             };
             expect(mockRefresh).toHaveBeenCalledTimes(2);
         });
@@ -134,6 +138,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 61,
                 refreshRate: 600,
+                wakeLock: false,
             };
             controller.refreshView(newConfig);
             expect(controller.configObject).toStrictEqual(controller.config);
@@ -389,6 +394,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 70,
                 refreshRate: 700,
+                wakeLock: false,
             };
             const button = controller.typedElement("discardConfigButton", "button").get();
             button.click();
@@ -405,6 +411,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 70,
                 refreshRate: 700,
+                wakeLock: false,
             };
             const button = controller.typedElement("saveConfigButton", "button").get();
             button.click();
@@ -433,6 +440,7 @@ describe("Settings Popup Controller", () => {
                 useGlobalRotationRate: true,
                 rotationRate: 60,
                 refreshRate: 600,
+                wakeLock: false,
             };
             checkbox.click();
             expect(controller.unsavedConfigObject.sites[0].rotationRate).toBe(60);
@@ -469,7 +477,7 @@ describe("Settings Popup Controller", () => {
                 0: {
                     text: async () => {
                         return Promise.resolve(
-                            '{"sites":[{"url":"./frames/clock.html","rotationRate":75},{"url":"./frames/weather.html","rotationRate":75}],"useGlobalRotationRate":true,"rotationRate":75,"refreshRate":600}',
+                            '{"sites":[{"url":"./frames/clock.html","rotationRate":75},{"url":"./frames/weather.html","rotationRate":75}],"useGlobalRotationRate":true,"rotationRate":75,"refreshRate":600,"wakeLock":false}',
                         );
                     },
                 } as unknown as File,
@@ -506,6 +514,25 @@ describe("Settings Popup Controller", () => {
             controller.importConfigInput.get().dispatchEvent(new Event("change"));
             const errorElement = document.getElementById("import-error");
             expect(errorElement?.hidden).toBe(false);
+        });
+        it("wakeLockCheckBox: toggles wakeLock property in unsaved configuration", () => {
+            // @ts-expect-error because
+            navigator.wakeLock = "someObject";
+            controller.addListenerOriginal();
+            expect(controller.unsavedConfigObject.wakeLock).toBe(false);
+            controller.wakeLockCheckBox.get().dispatchEvent(new Event("click"));
+            expect(controller.unsavedConfigObject.wakeLock).toBe(true);
+        });
+        it("wakeLockCheckBox: If wake lock API is not available, unchecks and disables the checkbox", () => {
+            // @ts-expect-error because
+            navigator.wakeLock = undefined;
+            controller.addListenerOriginal();
+            expect(controller.unsavedConfigObject.wakeLock).toBe(false);
+            controller.wakeLockCheckBox.get().dispatchEvent(new Event("click"));
+            const checkbox = controller.wakeLockCheckBox.get();
+            expect(controller.unsavedConfigObject.wakeLock).toBe(false);
+            expect(checkbox.checked).toBe(false);
+            expect(checkbox.disabled).toBe(true);
         });
     });
     describe("getTableColumnIndex", () => {
