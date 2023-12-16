@@ -51,10 +51,19 @@ export interface ControllerElementsTyped<K extends keyof HTMLElementTagNameMap> 
     ) => HTMLCollectionOf<HTMLElementTagNameMap[K]>;
     remove: () => void;
 }
+
+interface WakeLock {
+    on: () => Promise<void>;
+    off: () => Promise<void>;
+    check: () => boolean;
+    compatible: () => boolean;
+}
+
 export abstract class BaseController<T> {
     public abstract refresh(): Promise<void>;
     private ipInfoPosition: undefined | GeolocationPosition = undefined;
     protected abstract refreshView(data: T | Error): void;
+    private currentWakeLock: WakeLockSentinel | undefined;
     public element(id: string): ControllerElement {
         return {
             get: (): HTMLElement => {
@@ -220,6 +229,28 @@ export abstract class BaseController<T> {
                 speed: NaN,
             },
             timestamp: new Date().getTime(),
+        };
+    }
+    public get wakeLock(): WakeLock {
+        return {
+            on: async (): Promise<void> => {
+                if (!this.wakeLock.compatible()) {
+                    throw new Error("The Wake Lock API is not available on this browser / device");
+                }
+                this.currentWakeLock = await navigator.wakeLock.request();
+            },
+            off: async (): Promise<void> => {
+                if (this.currentWakeLock) {
+                    await this.currentWakeLock.release();
+                }
+            },
+            check: (): boolean => {
+                return this.currentWakeLock && !this.currentWakeLock.released ? true : false;
+            },
+            compatible: (): boolean => {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                return navigator.wakeLock ? true : false;
+            },
         };
     }
 }

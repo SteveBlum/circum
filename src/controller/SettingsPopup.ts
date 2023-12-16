@@ -102,6 +102,21 @@ export class SettingsPopupController extends BaseController<Settings> {
             });
             this.refreshView(this.unsavedConfig);
         });
+        this.wakeLockCheckBox.addListener("click", () => {
+            // = if we are currently trying to activate the wake lock, since it's not already engaged
+            if (!this.unsavedConfig.wakeLock && !this.wakeLock.compatible()) {
+                this.wakeLockCheckBox.get().checked = false;
+                this.wakeLockCheckBox.get().disabled = true;
+                new CustomToast(
+                    "error",
+                    "The Wake Lock API is not available on your browser or device - the screen can not be kept on automatically",
+                    "Keep screen active",
+                    "Error occured",
+                );
+            } else {
+                this.unsavedConfig.wakeLock = !this.unsavedConfig.wakeLock;
+            }
+        });
     }
     public refreshView(data: Settings | Error): void {
         if (data instanceof Error) throw data;
@@ -290,6 +305,9 @@ export class SettingsPopupController extends BaseController<Settings> {
     }
     get importConfigInput(): ControllerElementTyped<"input"> {
         return this.typedElement("importConfigInput", "input");
+    }
+    get wakeLockCheckBox(): ControllerElementTyped<"input"> {
+        return this.typedElement("wakeLockCheckBox", "input");
     }
     private updateRefreshRate(): void {
         const value = this.unsavedConfig.refreshRate;

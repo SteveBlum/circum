@@ -1,3 +1,4 @@
+import { CustomToast } from "../controller/Toast";
 import { Model } from "./model";
 
 export interface Site {
@@ -13,6 +14,7 @@ export const defaults: Settings = {
     useGlobalRotationRate: true,
     rotationRate: 60,
     refreshRate: 600,
+    wakeLock: false,
 };
 
 export interface Settings {
@@ -20,6 +22,7 @@ export interface Settings {
     rotationRate: number;
     useGlobalRotationRate: boolean;
     refreshRate: number;
+    wakeLock: boolean;
 }
 
 export class ConfigModel extends Model<() => Settings> {
@@ -48,18 +51,40 @@ export class ConfigModel extends Model<() => Settings> {
         }
     }
     public static load(): Settings {
-        try {
-            const storedConfig = localStorage.getItem("config");
-            if (!storedConfig) {
-                throw new Error("No config found in local storage");
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            const parsedStoredConfig = JSON.parse(storedConfig);
-            this.assertIsSettings(parsedStoredConfig);
-            return parsedStoredConfig;
-        } catch {
+        const storedConfig = localStorage.getItem("config");
+        if (!storedConfig) {
+            new CustomToast(
+                "warning",
+                `No saved config was found for ${document.URL}, defaults config are loaded instead`,
+                "Loading settings",
+                "Warning",
+            );
             return defaults;
         }
+        let parsedStoredConfig: unknown;
+        try {
+            parsedStoredConfig = JSON.parse(storedConfig);
+        } catch {
+            new CustomToast(
+                "error",
+                "Saved config couldn't be parsed, defaults config are loaded instead",
+                "Settings import",
+                "Error",
+            );
+            return defaults;
+        }
+        try {
+            this.assertIsSettings(parsedStoredConfig);
+        } catch {
+            new CustomToast(
+                "error",
+                "Saved config is invalid, defaults config are loaded instead",
+                "Settings import",
+                "Error",
+            );
+            return defaults;
+        }
+        return parsedStoredConfig;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public static assertIsSettings(value: any): asserts value is Settings {
@@ -67,7 +92,8 @@ export class ConfigModel extends Model<() => Settings> {
             !("sites" in value) ||
             !("rotationRate" in value) ||
             !("useGlobalRotationRate" in value) ||
-            !("refreshRate" in value)
+            !("refreshRate" in value) ||
+            !("wakeLock" in value)
         ) {
             throw new Error(`Saved config couldn't be parsed`);
         }

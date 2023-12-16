@@ -410,4 +410,86 @@ describe("Base Controller", () => {
             expect(element3).toBe(null);
         });
     });
+    describe("wakeLock", () => {
+        it("on - Requests wake lock", async () => {
+            const mockWakeLockRequest = jest.fn();
+            const mockWakeLock: WakeLock = {
+                request: mockWakeLockRequest,
+            };
+            // @ts-expect-error because
+            navigator.wakeLock = mockWakeLock;
+            controller = new TestController();
+            await controller.wakeLock.on();
+            expect(mockWakeLockRequest).toHaveBeenCalledTimes(1);
+        });
+        it("on - Throws exception in case of incompatible device", async () => {
+            // @ts-expect-error because
+            navigator.wakeLock = undefined;
+            controller = new TestController();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            await expect(controller.wakeLock.on()).rejects.toThrow(
+                "The Wake Lock API is not available on this browser / device",
+            );
+        });
+        it("off - Triggers wake lock release", async () => {
+            controller = new TestController();
+            const mockWakeLockRelease = jest.fn();
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            controller["currentWakeLock"] = {
+                release: mockWakeLockRelease,
+                onrelease: jest.fn(),
+                released: false,
+                type: "screen",
+                addEventListener: jest.fn(),
+                removeEventListener: jest.fn(),
+                dispatchEvent: jest.fn(),
+            };
+            await controller.wakeLock.off();
+            expect(mockWakeLockRelease).toHaveBeenCalledTimes(1);
+        });
+        it("check - Returns true if wake lock is active and not released", () => {
+            controller = new TestController();
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            controller["currentWakeLock"] = {
+                release: jest.fn(),
+                onrelease: jest.fn(),
+                released: false,
+                type: "screen",
+                addEventListener: jest.fn(),
+                removeEventListener: jest.fn(),
+                dispatchEvent: jest.fn(),
+            };
+            expect(controller.wakeLock.check()).toBe(true);
+        });
+        it("check - Returns false if wake lock is already released", () => {
+            // eslint-disable-next-line @typescript-eslint/dot-notation
+            controller["currentWakeLock"] = {
+                release: jest.fn(),
+                onrelease: jest.fn(),
+                released: true,
+                type: "screen",
+                addEventListener: jest.fn(),
+                removeEventListener: jest.fn(),
+                dispatchEvent: jest.fn(),
+            };
+            controller = new TestController();
+            expect(controller.wakeLock.check()).toBe(false);
+        });
+        it("check - Returns false if wake lock is not yet initialized", () => {
+            controller = new TestController();
+            expect(controller.wakeLock.check()).toBe(false);
+        });
+        it("compatible - Returns true in case that wakeLock object in navigator exists", () => {
+            // @ts-expect-error because
+            navigator.wakeLock = "someObject";
+            controller = new TestController();
+            expect(controller.wakeLock.compatible()).toBe(true);
+        });
+        it("compatible - Returns false in case that wakeLock object in navigator doesn't exists", () => {
+            // @ts-expect-error because
+            navigator.wakeLock = undefined;
+            controller = new TestController();
+            expect(controller.wakeLock.compatible()).toBe(false);
+        });
+    });
 });

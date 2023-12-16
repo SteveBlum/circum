@@ -88,6 +88,9 @@ export class MainController extends BaseController<Settings> {
             clearInterval(this.job);
         }
         this.job = setInterval(this.frames().refresh.bind(this), data.refreshRate * 1000);
+        // Applying WakeLock
+        if (data.wakeLock) void this.wakeLock.on();
+        else void this.wakeLock.off();
     }
     // This function uses many different approaches from various browsers to get fullscreen -
     // most of them don't work in this environment. No benefit in unit testing this.
