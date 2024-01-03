@@ -295,7 +295,7 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             const weatherDescription = document.createElement("p");
             weatherDescription.id = `forecastHourlyWeatherDescription${index}`;
             weatherDescription.className = "col-md-auto ml-auto";
-            weatherDescription.innerText = `${weatherCode.description}`;
+            weatherDescription.innerText = weatherCode.description;
             div.appendChild(time);
             div.appendChild(icon);
             div.appendChild(temparature);
