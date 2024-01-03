@@ -1,5 +1,11 @@
 module.exports = {
-    ignorePatterns: ["**/*.bundle.min.js", "dist/**/*", "**/open-meteo-client/**/*"],
+    ignorePatterns: [
+        "**/*.bundle.min.js",
+        "dist/**/*",
+        "**/open-meteo-client/**/*",
+        "node_modules/**/*",
+        "reports/**/*",
+    ],
     overrides: [
         {
             files: ["**/*.ts"],
