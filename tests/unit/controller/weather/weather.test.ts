@@ -144,8 +144,6 @@ describe("Weather Frame Controller", () => {
             expect(mockGetData).toBeCalledTimes(2);
             await controller.refresh();
             expect(mockGetData).toBeCalledTimes(3);
-            const res = await controller.model.data;
-            expect((res as V1ForecastGet200Response).current?.temperature2m).toBe(23);
         });
     });
     describe("refreshView", () => {

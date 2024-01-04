@@ -214,7 +214,7 @@ describe("Main Controller", () => {
         it("Triggers refresh action", () => {
             const mockRefresh = jest.fn();
             class ConfigTestController extends TestController {
-                public async refresh(): Promise<void> {
+                public async refreshView(): Promise<void> {
                     await mockRefresh();
                 }
             }

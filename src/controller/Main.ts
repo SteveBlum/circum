@@ -22,6 +22,7 @@ export class MainController extends BaseController<Settings> {
     private job: NodeJS.Timer | undefined;
     public frameCounter = 0;
     protected _model: ConfigModel;
+    public loading: Promise<void>;
     /**
      * @param model - Instance of the configuration model, used to get settings
      */
@@ -30,17 +31,16 @@ export class MainController extends BaseController<Settings> {
         this.addListener();
         model.listener.add(this.refreshView.bind(this));
         this._model = model;
-        void this.refresh();
+        this.loading = this.refresh();
     }
     /**
      * Overwrites the config within the registered config model instance, which will automatically also trigger a refresh
      * Shorthand for setting this._model.config
      * @param newConfig - New configuration
      */
-    // FIXME: the refresh shouldn't be necessary
     set config(newConfig: Settings) {
         this._model.config = newConfig;
-        void this.refresh();
+        this.loading = this._model.loading;
     }
     /**
      * Returns the configuration stored within the registered config model instance without changes

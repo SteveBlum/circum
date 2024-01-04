@@ -23,17 +23,13 @@ export class SettingsPopupController extends BaseController<Settings> {
     }
     /**
      * Overwrites the config within the registered config model instance, which will automatically also trigger a refresh
+     * The new configuration is also saved to local storage
      * Shorthand for setting this._model.config
      */
-    // FIXME: the refresh shouldn't be necessary, saving the config here also shouldn't be
     set config(newConfig: Settings) {
         this._model.config = newConfig;
-        this.loading = this.refresh();
-        try {
-            localStorage.setItem("config", JSON.stringify(this.config));
-        } catch {
-            // Do nothing, this is allowed to fail
-        }
+        this.loading = this._model.loading;
+        this._model.save();
     }
     /**
      * Returns the configuration stored within the registered config model instance without changes
