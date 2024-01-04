@@ -2,10 +2,17 @@ import { ConfigModel, Settings } from "../models/Config";
 import { CustomToast } from "./Toast";
 import { BaseController, ControllerElementTyped } from "./baseController";
 
+/**
+ * Controller for the settings popup of circum, belongs to src/views/partials/Settings.html
+ */
 export class SettingsPopupController extends BaseController<Settings> {
     protected _model: ConfigModel;
     protected unsavedConfig: Settings;
     public loading: Promise<void>;
+    /**
+     * In addition to regular controller activities, will create a copy of the applied configuration as unsaved configuration
+     * @param model - Instance of the configuration model, used to get settings
+     */
     constructor(model: ConfigModel) {
         super();
         this.addListener();
@@ -14,6 +21,11 @@ export class SettingsPopupController extends BaseController<Settings> {
         this.unsavedConfig = structuredClone(this.config);
         this.loading = this.refresh();
     }
+    /**
+     * Overwrites the config within the registered config model instance, which will automatically also trigger a refresh
+     * Shorthand for setting this._model.config
+     */
+    // FIXME: the refresh shouldn't be necessary, saving the config here also shouldn't be
     set config(newConfig: Settings) {
         this._model.config = newConfig;
         this.loading = this.refresh();
@@ -23,6 +35,10 @@ export class SettingsPopupController extends BaseController<Settings> {
             // Do nothing, this is allowed to fail
         }
     }
+    /**
+     * Returns the configuration stored within the registered config model instance without changes
+     * Shorthand for getting this._model.config
+     */
     get config(): Settings {
         return this._model.config;
     }
@@ -118,6 +134,10 @@ export class SettingsPopupController extends BaseController<Settings> {
             }
         });
     }
+    /**
+     * Updates all UI components controlled by this controller based on the given configuration
+     * @param data - Configuration to display. If an Error is provided instead, it will be thrown.
+     */
     public refreshView(data: Settings | Error): void {
         if (data instanceof Error) throw data;
         this.updateRefreshRate();
@@ -258,54 +278,74 @@ export class SettingsPopupController extends BaseController<Settings> {
         const table = this.frameTable.get();
         table.tBodies[0].replaceWith(newBody);
     }
+    /**
+     * Triggers all listeners registered for the config model
+     * Shorthand for this._model.refresh()
+     */
     public async refresh(): Promise<void> {
         return this._model.refresh();
     }
+    /** Returns the table which contains all websites to display as iframes */
     get frameTable(): ControllerElementTyped<"table"> {
         return this.typedElement("frameTable", "table");
     }
+    /** Returns button which adds a new line to the iframe settings table */
     get addFrameButton(): ControllerElementTyped<"button"> {
         return this.typedElement("addFrameButton", "button");
     }
+    /** Returns button to save the configuration */
     get saveConfigButton(): ControllerElementTyped<"button"> {
         return this.typedElement("saveConfigButton", "button");
     }
+    /** Returns the checkbox to use the global rotation rate */
     get useGlobalRotationRateCheckBox(): ControllerElementTyped<"input"> {
         return this.typedElement("useGlobalRotationRateCheckBox", "input");
     }
+    /** Returns the global rotation rate header element */
     get frameRotationRateHeader(): ControllerElementTyped<"th"> {
         return this.typedElement("frameRotationRateHeader", "th");
     }
+    /** Returns the div containing the global rotation rate elements */
     get rotationRateDiv(): ControllerElementTyped<"div"> {
         return this.typedElement("rotationRateDiv", "div");
     }
+    /** Returns the button to discard unsaved changes to the configuration */
     get discardConfigButton(): ControllerElementTyped<"button"> {
         return this.typedElement("discardConfigButton", "button");
     }
+    /** Returns the popup (modal) */
     get modal(): ControllerElementTyped<"div"> {
         return this.typedElement("settings", "div");
     }
+    /** Returns refresh rate slider element */
     get refreshRateSlider(): ControllerElementTyped<"input"> {
         return this.typedElement("refreshRateSlider", "input");
     }
+    /** Returns global rotation rate slider element */
     get rotationRateSlider(): ControllerElementTyped<"input"> {
         return this.typedElement("rotationRateSlider", "input");
     }
+    /** Returns refresh rate text element */
     get refreshRateText(): HTMLParagraphElement {
         return this.typedElement("refreshRate", "p").get();
     }
+    /** Returns the global rotation rate text element */
     get rotationRateText(): HTMLParagraphElement {
         return this.typedElement("rotationRate", "p").get();
     }
+    /** Returns button to export the configuraton */
     get exportConfigButton(): ControllerElementTyped<"a"> {
         return this.typedElement("exportConfigButton", "a");
     }
+    /** Returns button to import the configuraton */
     get importConfigButton(): ControllerElementTyped<"button"> {
         return this.typedElement("importConfigButton", "button");
     }
+    /** Returns the hidden input element to import the configuration */
     get importConfigInput(): ControllerElementTyped<"input"> {
         return this.typedElement("importConfigInput", "input");
     }
+    /** Returns button the checkbox to keep the screen active */
     get wakeLockCheckBox(): ControllerElementTyped<"input"> {
         return this.typedElement("wakeLockCheckBox", "input");
     }

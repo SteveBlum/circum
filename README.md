@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/SteveBlum/circum"><img src="./src/assets/logo.svg" alt="Markdownify" width="200"></a>
+  <a href="https://github.com/SteveBlum/circum"><img src="./src/assets/logo.svg" alt="circum" width="200"></a>
   <br>
   circum
   <br>

@@ -19,6 +19,10 @@ const defaultConfig: WeatherConfig = {
 
 type CardinalDirection = "North" | "Northeast" | "East" | "Southeast" | "South" | "Southwest" | "West" | "Northwest";
 
+/**
+ * Controller for the circum weather app, a small web app used as iframe for testing in circum
+ * Belongs to /src/views/frames/Weather.html
+ */
 export class WeatherController extends BaseController<V1ForecastGet200Response> {
     protected _model: Model<() => Promise<V1ForecastGet200Response>>;
     private position: GeolocationPosition | undefined = undefined;
@@ -169,11 +173,18 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             icon: "bi-cloud-lightning-rain-fill",
         },
     ];
+    /**
+     * @param autoRefresh - Interval in milliseconds in which the weather data is refreshed
+     */
     constructor(autoRefresh = 60000) {
         super();
         this._model = new Model(this.getData.bind(this), this.refreshView.bind(this));
         setInterval(this.syncRefresh.bind(this), autoRefresh);
     }
+    /**
+     * Returns the geolocation
+     * @param refresh - If set to false, a cache instance variable will be used, if possible
+     */
     public async getCoordinates(refresh = false): Promise<GeolocationCoordinates> {
         if (!this.position || refresh) {
             this.position = await this.getPosition();
@@ -183,9 +194,18 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
     protected syncRefresh(): void {
         void this.refresh();
     }
+    /**
+     * Triggers all listeners registered for the model
+     * Shorthand for this._model.refresh()
+     */
+    // FIXME: Can this somehow be moved to baseController?
     public async refresh(): Promise<void> {
         return this._model.refresh();
     }
+    /**
+     * Shorthand for this._model
+     */
+    // FIXME: This isn't necessary
     get model(): Model<() => Promise<V1ForecastGet200Response>> {
         return this._model;
     }
@@ -245,24 +265,31 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             this.addHourlyForecasts(data.hourly);
         }
     }
+    /** Returns the location description HTML element */
     get locationElement(): HTMLHeadingElement {
         return this.typedElement("location", "h2").get();
     }
+    /** Returns the temparature label HTML element */
     get temperatureElement(): HTMLHeadingElement {
         return this.typedElement("temperature", "h1").get();
     }
+    /** Returns the "last updated" HTML text element */
     get lastUpdatedElement(): HTMLElement {
         return this.typedElement("lastUpdated", "small").get();
     }
+    /** Returns the weather icon HTML element */
     get weatherIcon(): HTMLHeadingElement {
         return this.typedElement("weatherIcon", "h3").get();
     }
+    /** Returns the weather description HTML text element */
     get weatherDescription(): HTMLHeadingElement {
         return this.typedElement("weatherDescription", "h2").get();
     }
+    /** Returns the wind description HTML text element */
     get wind(): HTMLHeadingElement {
         return this.typedElement("wind", "h2").get();
     }
+    /** Returns the HTML div containing the hourly forecast */
     get forecastHourlyDiv(): HTMLDivElement {
         return this.typedElement("forecastHourlyDiv", "div").get();
     }
@@ -303,6 +330,7 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             this.forecastHourlyDiv.appendChild(div);
         }
     }
+    /** A function to get the weather data used to initialize the model */
     public async getData(): Promise<V1ForecastGet200Response> {
         const api = weatherForecastAPI;
         const coordinates = await this.getCoordinates().catch();
