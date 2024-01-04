@@ -99,7 +99,7 @@ describe("Settings Popup Controller", () => {
         it("Setter triggers refresh action", () => {
             const mockRefresh = jest.fn();
             class ConfigTestController extends TestController {
-                public async refresh(): Promise<void> {
+                public async refreshView(): Promise<void> {
                     await mockRefresh();
                 }
             }

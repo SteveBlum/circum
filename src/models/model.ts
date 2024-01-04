@@ -102,7 +102,7 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
      */
     set getData(getData: GetterFunction<ReturnType<T>>) {
         this._getData = getData;
-        void this.refresh();
+        this.loading = this.refresh();
     }
     /**
      * Retrieves result from the last execution of the getter function

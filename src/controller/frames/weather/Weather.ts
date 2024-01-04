@@ -198,16 +198,8 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
      * Triggers all listeners registered for the model
      * Shorthand for this._model.refresh()
      */
-    // FIXME: Can this somehow be moved to baseController?
     public async refresh(): Promise<void> {
         return this._model.refresh();
-    }
-    /**
-     * Shorthand for this._model
-     */
-    // FIXME: This isn't necessary
-    get model(): Model<() => Promise<V1ForecastGet200Response>> {
-        return this._model;
     }
     private findWeatherCode(code: number): WeatherCode | undefined {
         return this.weatherCodes.find((weatherCode) => {
