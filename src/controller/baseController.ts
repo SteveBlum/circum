@@ -15,6 +15,11 @@ interface IPInfo {
 const states = ["Loading", "Success", "Error", "Normal"] as const;
 type State = (typeof states)[number];
 
+/**
+ * Checks if a given string is a valid state as defined by the state array (Loading, Success, Error or Normal)
+ * @param value - String value to check
+ * @returns Check result as boolean
+ */
 function containsState(value: string): boolean {
     return (
         states.find((state) => {
@@ -23,32 +28,106 @@ function containsState(value: string): boolean {
     );
 }
 
+/**
+ * Functions to handle HTML elements of a view as generic HTMLElements
+ */
 export interface ControllerElement {
+    /**
+     * Returns the HTML element itself
+     */
     get: () => HTMLElement;
+    /**
+     * Adds one or multiple event handlers to a specified event
+     * @param event - Event name
+     * @param listener - event handler function or array of event handler functions
+     * @returns Updated HTML element
+     */
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLElement;
+    /**
+     * Removes the HTML Element
+     */
     remove: () => void;
+    /**
+     * Activates a state for the element.
+     * All child elements which contain the states name in their id will be made visible.
+     * All others will be made invisible. Capitalization in the id names is ignored for this.
+     * @param state - New element state
+     * @param timeToNormalMS - (optional) number of milliseconds before the elements state is set to "Normal". Can be used for temporary indicators.
+     */
     triggerState: (state: State, timeToNormalMS?: number) => void;
 }
 
+/**
+ * Functions to handle multiple HTML elements of a view as generic HTMLElements
+ */
 export interface ControllerElements {
+    /**
+     * Returns the HTML element itself
+     */
     get: () => HTMLCollectionOf<Element>;
+    /**
+     * Adds one or multiple event handlers to a specified event
+     * @param event - Event name
+     * @param listener - event handler function or array of event handler functions
+     * @returns Updated HTML element
+     */
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLCollectionOf<Element>;
+    /**
+     * Removes the HTML Element
+     */
     remove: () => void;
 }
 
+/**
+ * Functions to handle HTML elements of a view as their tag-specific types
+ */
 export interface ControllerElementTyped<K extends keyof HTMLElementTagNameMap> {
+    /**
+     * Returns the HTML element itself
+     */
     get: () => HTMLElementTagNameMap[K];
+    /**
+     * Adds one or multiple event handlers to a specified event
+     * @param event - Event name
+     * @param listener - event handler function or array of event handler functions
+     * @returns Updated HTML element
+     */
     addListener: (event: string, listener: eventFunction | eventFunction[]) => HTMLElementTagNameMap[K];
+    /**
+     * Removes the HTML Element
+     */
     remove: () => void;
+    /**
+     * Activates a state for the element.
+     * All child elements which contain the states name in their id will be made visible.
+     * All others will be made invisible. Capitalization in the id names is ignored for this.
+     * @param state - New element state
+     * @param timeToNormalMS - (optional) number of milliseconds before the elements state is set to "Normal". Can be used for temporary indicators.
+     */
     triggerState: (state: State, timeToNormalMS?: number) => void;
 }
 
+/**
+ * Functions to handle multiple HTML elements of a view as their tag-specific types
+ */
 export interface ControllerElementsTyped<K extends keyof HTMLElementTagNameMap> {
+    /**
+     * Returns the HTML element itself
+     */
     get: () => HTMLCollectionOf<HTMLElementTagNameMap[K]>;
+    /**
+     * Adds one or multiple event handlers to a specified event
+     * @param event - Event name
+     * @param listener - event handler function or array of event handler functions
+     * @returns Updated HTML element
+     */
     addListener: (
         event: string,
         listener: eventFunction | eventFunction[],
     ) => HTMLCollectionOf<HTMLElementTagNameMap[K]>;
+    /**
+     * Removes the HTML Element
+     */
     remove: () => void;
 }
 
@@ -59,11 +138,19 @@ interface WakeLock {
     compatible: () => boolean;
 }
 
+/**
+ * Circum-specifc base class for a controller
+ */
 export abstract class BaseController<T> {
     public abstract refresh(): Promise<void>;
     private ipInfoPosition: undefined | GeolocationPosition = undefined;
     protected abstract refreshView(data: T | Error): void;
     private currentWakeLock: WakeLockSentinel | undefined;
+    /**
+     * Exposes management functions for the HTML element with the given id
+     * @param id - HTML element id
+     * @returns HTML element management functions
+     */
     public element(id: string): ControllerElement {
         return {
             get: (): HTMLElement => {
@@ -83,6 +170,11 @@ export abstract class BaseController<T> {
             },
         };
     }
+    /**
+     * Exposes management functions for all HTML elements with the given class name
+     * @param className - class name to filter HTML elements for
+     * @returns HTML element management functions
+     */
     public elements(className: string): ControllerElements {
         return {
             get: (): HTMLCollectionOf<Element> => {
@@ -103,6 +195,12 @@ export abstract class BaseController<T> {
             },
         };
     }
+    /**
+     * Exposes management functions for the tag-specifically typed HTML element with the given id
+     * @param id - HTML element id
+     * @param type - HTML tag type
+     * @returns HTML element management functions
+     */
     public typedElement<K extends keyof HTMLElementTagNameMap>(id: string, type: K): ControllerElementTyped<K> {
         return {
             get: (): HTMLElementTagNameMap[K] => {
@@ -125,6 +223,11 @@ export abstract class BaseController<T> {
             },
         };
     }
+    /**
+     * Exposes management functions for all tag-specifically typed HTML element with the given type
+     * @param type - HTML tag type
+     * @returns HTML element management functions
+     */
     public typedElements<K extends keyof HTMLElementTagNameMap>(type: K): ControllerElementsTyped<K> {
         return {
             get: (): HTMLCollectionOf<HTMLElementTagNameMap[K]> => {
@@ -155,6 +258,9 @@ export abstract class BaseController<T> {
         });
         return element;
     }
+    /**
+     * Uses either the browser / devices geolocation API or its public IP address to determine the clients location
+     */
     public getPosition(): Promise<GeolocationPosition> {
         return new Promise((resolve) => {
             navigator.geolocation.getCurrentPosition(
@@ -170,6 +276,9 @@ export abstract class BaseController<T> {
         });
     }
     /* istanbul ignore next */
+    /**
+     * Returns the response of a GET request to https://ipinfo.io/json
+     */
     get ipInfo(): Promise<Response> {
         return fetch("https://ipinfo.io/json");
     }
@@ -231,6 +340,9 @@ export abstract class BaseController<T> {
             timestamp: new Date().getTime(),
         };
     }
+    /**
+     * Exposes management functions to keep the screen active on mobile devices
+     */
     public get wakeLock(): WakeLock {
         return {
             on: async (): Promise<void> => {

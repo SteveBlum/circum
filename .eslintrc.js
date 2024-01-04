@@ -5,6 +5,7 @@ module.exports = {
         "**/open-meteo-client/**/*",
         "node_modules/**/*",
         "reports/**/*",
+        "docs/**/*",
     ],
     overrides: [
         {
@@ -16,7 +17,33 @@ module.exports = {
                 "prettier",
             ],
             parser: "@typescript-eslint/parser",
-            plugins: ["@typescript-eslint", "prettier"],
+            plugins: ["@typescript-eslint", "prettier", "eslint-plugin-jsdoc"],
+            rules: {
+                "jsdoc/require-jsdoc": [
+                    "error",
+                    {
+                        publicOnly: {
+                            cjs: true,
+                            esm: true,
+                            window: true,
+                        },
+                        require: {
+                            ArrowFunctionExpression: true,
+                            ClassDeclaration: true,
+                            ClassExpression: true,
+                            FunctionDeclaration: true,
+                            FunctionExpression: true,
+                            MethodDefinition: true,
+                        },
+                        contexts: [
+                            "TSInterfaceDeclaration",
+                            "TSTypeAliasDeclaration",
+                            "TSEnumDeclaration",
+                            "TSPropertySignature",
+                        ],
+                    },
+                ],
+            },
             env: {
                 browser: true,
                 node: true,

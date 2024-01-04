@@ -9,8 +9,11 @@ interface RgbaColor {
     b: number;
     a: number;
 }
+/** Configuration attributes for the clock */
 export interface ClockConfig {
+    /** locale in JavaScript locales format, used for texts and date/time formatting */
     locale: Intl.LocalesArgument;
+    /** Main color of the clock */
     color: RgbaColor;
 }
 
@@ -19,11 +22,17 @@ const defaultConfig: ClockConfig = {
     color: { r: 30, g: 150, b: 0, a: 1 },
 };
 
+/**
+ * Controller for the circum clock, a small web app used as iframe for testing in circum
+ * Belongs to /src/views/frames/Clock.html
+ */
 export class ClockController extends BaseController<ClockConfig> {
     protected _model: Model<() => Promise<ClockConfig>>;
     protected config: ClockConfig;
     protected interval: NodeJS.Timer | undefined;
     private canvasID = "canvas";
+    // Nothing to be said about this constructor
+    // eslint-disable-next-line jsdoc/require-jsdoc
     constructor(config = defaultConfig) {
         super();
         this.config = config;
@@ -45,17 +54,21 @@ export class ClockController extends BaseController<ClockConfig> {
         if (value === 0) return 0;
         return Math.floor(value / 3);
     }
+    /** Returns a darkened variant of the main color */
     get colorDark(): RgbaColor {
         return this.darkenColor(this.config.color);
     }
+    /** Returns the canvas HTML element */
     get canvas(): HTMLCanvasElement {
         return this.typedElement(this.canvasID, "canvas").get();
     }
+    /** Returns the canvas context HTML element */
     get canvasContext(): CanvasRenderingContext2D {
         const canvasContext = this.canvas.getContext("2d");
         if (!canvasContext) throw new Error(`Didn't find 2D context for canvas ${this.canvasID}`);
         return canvasContext;
     }
+    /** A function to get the clock configuration used to initialize the model */
     public getData(): Promise<ClockConfig> {
         return Promise.resolve(this.config);
     }
@@ -146,10 +159,18 @@ export class ClockController extends BaseController<ClockConfig> {
         this.canvasContext.fillStyle = this.getRgbaString(this.config.color);
         this.canvasContext.fillText(time, this.canvas.width / 2, this.canvas.height / 2 + 30);
     }
+    /**
+     * Updates all UI components controlled by this controller based on the given configuration
+     * @param data - Configuration to display. If an Error is provided instead, it will be thrown.
+     */
     public refreshView(data: ClockConfig | Error): void {
         if (data instanceof Error) throw data;
         this.interval = setInterval(this.renderTime.bind(this), 1000);
     }
+    /**
+     * Triggers all listeners registered for the model
+     * Shorthand for this._model.refresh()
+     */
     public async refresh(): Promise<void> {
         return this._model.refresh();
     }

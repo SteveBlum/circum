@@ -26,10 +26,20 @@ const MessageTypeMetadata = {
 
 type MessageType = keyof typeof MessageTypeMetadata;
 
+/**
+ * A class to manage bootstrap toasts, used to display notifications to the user in circum
+ */
 export class CustomToast {
     private toastContainerName = "toastContainer";
     private toast: HTMLDivElement;
     private toastAdded = false;
+    /**
+     * Initializes the toast message and immediately displays it
+     * @param type - Severity of the message, controls its appearance
+     * @param message - Toast description
+     * @param header - Toast title
+     * @param headerDetail - Toast header detail, displayed right-aligned and smaller than the title
+     */
     constructor(type: MessageType, message: string, header: string, headerDetail?: string) {
         this.toast = this.assemble(
             this.createDiv(type),
@@ -100,6 +110,9 @@ export class CustomToast {
         return element;
     }
 
+    /**
+     * Displays the toast. Creates it first in case it doesn't already exist in the DOM
+     */
     public show(): void {
         if (!this.toastAdded) {
             this.containerDiv.add(this.toast);

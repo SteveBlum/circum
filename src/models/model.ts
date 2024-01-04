@@ -1,6 +1,13 @@
+/** (Dynamic) Type to expect in event handler functions which were added as listeners */
 export type CallbackParameter<T> = Awaited<T> | Error;
+/** Event handler function type for listeners */
 export type Callback<T> = (data: CallbackParameter<T>) => void;
+/** Function type for getting model data. Both synchronous and async functions are supported */
 export type GetterFunction<T> = () => T;
+/**
+ * Return type for registered getter function
+ * Contains expected type or Error either as Promise or direct values
+ */
 export type GetterFunctionReturn<T> = T extends Promise<infer P> ? Promise<P | Error> : T | Error;
 
 interface Listener<T> {
@@ -8,6 +15,10 @@ interface Listener<T> {
     callback: Callback<T>;
 }
 
+/**
+ * Basic model class for circum
+ * Can either be used directly or implemented as child
+ */
 export class Model<T extends GetterFunction<ReturnType<T>>> {
     protected _data: GetterFunctionReturn<ReturnType<T>>;
     protected _getData: GetterFunction<ReturnType<T>>;
@@ -40,6 +51,11 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
         },
     };
 
+    /**
+     * Basic model construtor
+     * @param getData - Model data getter function (sync and async is both allowed)
+     * @param callback - Listener functions to trigger in case getData is overwritten. Can also be added later using setter function listener.add()
+     */
     constructor(getData: T, callback?: Callback<ReturnType<T>>) {
         if (callback) {
             this.listener.add(callback);
@@ -48,10 +64,17 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
         this._data = this.executeGetData();
         this.loading = this.refresh();
     }
+    /**
+     * Retrieves result from getterFunction and triggers all registered listeners to process the result
+     */
     public async refresh(): Promise<void> {
         this._data = this.executeGetData();
         return this.listener.trigger();
     }
+    /**
+     * Retrieves result from the getterFunction by specifically triggering it.
+     * The result is cached and can be read by the data getter function at any point.
+     */
     protected executeGetData(): GetterFunctionReturn<ReturnType<T>> {
         let tempData: ReturnType<T> | Error = new Error("Function wasn't executed");
         try {
@@ -73,10 +96,18 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
             return tempData;
         }
     }
+    /**
+     * Overwrites getter function with new one and triggers refresh afterwards
+     * @param getData - New getter function
+     */
     set getData(getData: GetterFunction<ReturnType<T>>) {
         this._getData = getData;
         void this.refresh();
     }
+    /**
+     * Retrieves result from the last execution of the getter function
+     * Will NOT trigger the getter function. Use executeGetData() for that
+     */
     get data(): GetterFunctionReturn<ReturnType<T>> {
         return this._data;
     }

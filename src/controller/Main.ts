@@ -15,10 +15,16 @@ interface Frames {
     activateFirst: () => void;
 }
 
+/**
+ * Controller for circum main screen, belongs to src/views/partials/Main.html
+ */
 export class MainController extends BaseController<Settings> {
     private job: NodeJS.Timer | undefined;
     public frameCounter = 0;
     protected _model: ConfigModel;
+    /**
+     * @param model - Instance of the configuration model, used to get settings
+     */
     constructor(model: ConfigModel) {
         super();
         this.addListener();
@@ -26,10 +32,20 @@ export class MainController extends BaseController<Settings> {
         this._model = model;
         void this.refresh();
     }
+    /**
+     * Overwrites the config within the registered config model instance, which will automatically also trigger a refresh
+     * Shorthand for setting this._model.config
+     * @param newConfig - New configuration
+     */
+    // FIXME: the refresh shouldn't be necessary
     set config(newConfig: Settings) {
         this._model.config = newConfig;
         void this.refresh();
     }
+    /**
+     * Returns the configuration stored within the registered config model instance without changes
+     * Shorthand for getting this._model.config
+     */
     get config(): Settings {
         return this._model.config;
     }
@@ -49,15 +65,28 @@ export class MainController extends BaseController<Settings> {
             this.config = { ...this.config, ...{ refreshRate: refreshRateValue } };
         });
     }
+    /**
+     * Returns the refresh options dropdown HTML element
+     */
     get refreshOptions(): ControllerElements {
         return this.elements("dropdown-item refreshOption");
     }
+    /**
+     * Returns the fullscreen button HTML element
+     */
     get fullscreenButton(): ControllerElementTyped<"a"> {
         return this.typedElement("fullscreenButton", "a");
     }
+    /**
+     * Returns all items within the main carousel
+     */
     get carouselItems(): HTMLCollectionOf<Element> {
         return this.elements("carousel-item").get();
     }
+    /**
+     * Triggers all listeners registered for the config model
+     * Shorthand for this._model.refresh()
+     */
     public async refresh(): Promise<void> {
         return this._model.refresh();
     }
@@ -72,6 +101,10 @@ export class MainController extends BaseController<Settings> {
         });
         return res;
     }
+    /**
+     * Updates all UI components controlled by this controller based on the given configuration
+     * @param data - Configuration to display. If an Error is provided instead, it will be thrown.
+     */
     public refreshView(data: Settings | Error): void {
         if (data instanceof Error) throw data;
         // Setting Frames
@@ -92,8 +125,10 @@ export class MainController extends BaseController<Settings> {
         if (data.wakeLock) void this.wakeLock.on();
         else void this.wakeLock.off();
     }
-    // This function uses many different approaches from various browsers to get fullscreen -
-    // most of them don't work in this environment. No benefit in unit testing this.
+    /**
+     * This function uses many different approaches from various browsers to get fullscreen -
+     * most of them don't work in this environment. No benefit in unit testing this.
+     */
     /* istanbul ignore next */
     protected async toggleFullScreen(): Promise<void> {
         // https://stackoverflow.com/questions/54242775/angular-7-how-does-work-the-html5-fullscreen-api-ive-a-lot-of-errors
@@ -133,6 +168,10 @@ export class MainController extends BaseController<Settings> {
             await cancelFullScreen.call(docWithBrowsersExitFunctions);
         }
     }
+    /**
+     * Exposes management functions for an individal iframe of the carousel
+     * @param id - iframe HTML element id
+     */
     public frame(id: string): Frame {
         return {
             get: (): HTMLIFrameElement => {
@@ -153,9 +192,15 @@ export class MainController extends BaseController<Settings> {
             },
         };
     }
+    /**
+     * Returns the div containing all child elements of the carousel
+     */
     get carouselInner(): ControllerElementTyped<"div"> {
         return this.typedElement("myCarouselInner", "div");
     }
+    /**
+     * Exposes management functions for all iframes of the carousel
+     */
     public frames(): Frames {
         return {
             get: (): HTMLCollectionOf<HTMLIFrameElement> => {
