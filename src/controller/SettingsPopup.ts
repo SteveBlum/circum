@@ -171,6 +171,19 @@ export class SettingsPopupController extends BaseController<Settings> {
                 index -= 1;
                 this.unsavedConfig.sites[index].url = target.textContent;
             });
+            urlCell.addEventListener("focusout", (event) => {
+                this.element(`frame${index.toString()}-status`).triggerState("Loading");
+                const url = (event.target as HTMLTableCellElement).textContent;
+                if (!url) {
+                    this.element(`frame${index.toString()}-status`).triggerState("Error");
+                    return;
+                }
+                if (this.isUrlValid(url)) {
+                    this.element(`frame${index.toString()}-status`).triggerState("Success");
+                } else {
+                    this.element(`frame${index.toString()}-status`).triggerState("Error");
+                }
+            });
             const rotationRateCell = row.insertCell(this.getTableColumnIndex("frameRotationRateHeader"));
             rotationRateCell.id = `frame${index.toString()}-rotationRate`;
             rotationRateCell.className = "pt-3-half";
@@ -194,7 +207,10 @@ export class SettingsPopupController extends BaseController<Settings> {
             const statusCell = row.insertCell(this.getTableColumnIndex("frameStatusHeader"));
             statusCell.id = `frame${index.toString()}-status`;
             statusCell.className = "pt-3-half";
-            statusCell.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+            statusCell.innerHTML =
+                `<i id=frame${index.toString()}-status-success hidden="true" class="bi bi-check-circle-fill text-success"></i>` +
+                `<i id=frame${index.toString()}-status-error hidden="true" class="bi bi-x-circle-fill text-danger"></i>` +
+                `<i id=frame${index.toString()}-status-loading hidden="true" class="bi bi-circle text-primary"></i>`;
             const moveCell = row.insertCell(this.getTableColumnIndex("frameMoveHeader"));
             moveCell.id = `frame${index.toString()}-move`;
             moveCell.className = "pt-3-half";
