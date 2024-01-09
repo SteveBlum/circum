@@ -170,6 +170,36 @@ describe("Settings Popup Controller", () => {
             frameUrlCell.dispatchEvent(new Event("input"));
             expect(controller.unsavedConfigObject.sites[0].url).toBe("./frames/clock.html");
         });
+        it("frame management url cell focusout event will check the URL for validity and display the status accorindingly", () => {
+            controller.refreshView(config);
+            const frameUrlCell = controller.element("frame0-url").get();
+            frameUrlCell.textContent = "https://some.validurl.com";
+            frameUrlCell.dispatchEvent(new Event("focusout"));
+            const frameStatusSuccess = controller.element("frame0-status-success").get();
+            const frameStatusError = controller.element("frame0-status-error").get();
+            expect(frameStatusError.hidden).toBe(true);
+            expect(frameStatusSuccess.hidden).toBe(false);
+        });
+        it("frame management url cell focusout event will display an error status in case of an invalid URL", () => {
+            controller.refreshView(config);
+            const frameUrlCell = controller.element("frame0-url").get();
+            frameUrlCell.textContent = "https:::invalid.url";
+            frameUrlCell.dispatchEvent(new Event("focusout"));
+            const frameStatusSuccess = controller.element("frame0-status-success").get();
+            const frameStatusError = controller.element("frame0-status-error").get();
+            expect(frameStatusError.hidden).toBe(false);
+            expect(frameStatusSuccess.hidden).toBe(true);
+        });
+        it("frame management url cell focusout event will display an error status in case the URL is empty", () => {
+            controller.refreshView(config);
+            const frameUrlCell = controller.element("frame0-url").get();
+            frameUrlCell.textContent = null;
+            frameUrlCell.dispatchEvent(new Event("focusout"));
+            const frameStatusSuccess = controller.element("frame0-status-success").get();
+            const frameStatusError = controller.element("frame0-status-error").get();
+            expect(frameStatusError.hidden).toBe(false);
+            expect(frameStatusSuccess.hidden).toBe(true);
+        });
         it("frame management remove button will remove the respective frame from the unsaved config, but not (yet) the saved config", () => {
             controller.refreshView(config);
             expect(controller.unsavedConfigObject.sites.length).toBe(2);

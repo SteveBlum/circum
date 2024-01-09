@@ -8,6 +8,7 @@ describe("Base Controller", () => {
     class TestController extends BaseController<boolean> {
         public refresh = mockRefresh;
         protected refreshView = jest.fn();
+        public isUrlValid = super.isUrlValid.bind(this);
         get ipInfo(): Promise<Response> {
             return new Promise((resolve) => {
                 resolve({
@@ -490,6 +491,20 @@ describe("Base Controller", () => {
             navigator.wakeLock = undefined;
             controller = new TestController();
             expect(controller.wakeLock.compatible()).toBe(false);
+        });
+    });
+    describe("isUrlValid", () => {
+        it("Returns true in case of a full and valid URL", () => {
+            expect(controller.isUrlValid("https://some.validurl.com")).toBe(true);
+        });
+        it("Returns true in case of a relative path to a known circum frame", () => {
+            expect(controller.isUrlValid("./frames/clock.html")).toBe(true);
+        });
+        it("Returns false in case of an invalid full URL", () => {
+            expect(controller.isUrlValid("https::////not.a.url")).toBe(false);
+        });
+        it("Returns false in case of an unknown relative path", () => {
+            expect(controller.isUrlValid("./not/known")).toBe(false);
         });
     });
 });

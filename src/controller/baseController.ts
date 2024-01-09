@@ -1,3 +1,5 @@
+import { defaults } from "../models/Config";
+
 type eventFunction = (event: Event) => void;
 interface IPInfo {
     ip: string;
@@ -340,6 +342,22 @@ export abstract class BaseController<T> {
             timestamp: new Date().getTime(),
         };
     }
+    protected isUrlValid(checkURL: string): boolean {
+        try {
+            new URL(checkURL);
+            return true;
+        } catch {
+            const isDefaultSite =
+                defaults.sites.findIndex((defaultsite) => {
+                    return checkURL === defaultsite.url;
+                }) !== -1;
+            if (isDefaultSite) {
+                return true;
+            }
+            return false;
+        }
+    }
+
     /**
      * Exposes management functions to keep the screen active on mobile devices
      */
