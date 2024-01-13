@@ -25,14 +25,16 @@
 
 * **Rotating multiple web pages** - Well suited for monitoring or home automation scenarios 
 * **Discrete controls** - During operation, all menu buttons and controls are formatted into the content without being distracting
-* **Configurable** - All settings can be changed on the fly and are stored in web storage
+* **Configurable** - The web pages to display, rotation speed and other settings can be changed at any point
+* **Configuration management** - All settings can be saved on your device, imported and exported
+* **Keep screen active** - Can be configured to keep the screen of smartphones or tablets active
 * **Automatic refresh** - Included iframes are refreshed regularly to keep connections alive
 
 ## How To Use
 
 ### Using public page
 
-The current stable version of circum is running at https://steveblum.github.io/circum/
+The current stable version of circum is available at https://steveblum.github.io/circum/
 Remember that any settings you save in circum are only stored in your browser, so this page is safe to use.
 It is however possible to run circum yourself if you prefer a local deployment (see below).
 
@@ -83,7 +85,7 @@ $ npm start
 
 **Q: The default weather page doesn't show any data. Why is this happening?**
 
-**A:** When it is starting, it will use a geolocation request to determine your location. If the request fails, all data will be left blank. This may happen because you or your browser has declined the authorization for the geolocation, or beause you are accessing circum over an unsafe context (http instead of https).
+**A:** When it is starting, it will use a geolocation request or IP-based geolocation to determine your approximate gps coordinates. If the request fails, all data will be left blank. This may happen because you or your browser has declined the authorization for the geolocation, or beause you are accessing circum over an unsafe context (http instead of https).
 
 ## Built with
 
