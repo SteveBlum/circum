@@ -26,7 +26,7 @@
   "author": "Steve Blum",
   "license": "GPL-3.0-only",
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@openapitools/openapi-generator-cli": "^2.9.0",
     "@types/bootstrap": "^5.2.10",
     "@types/jest": "^29.5.11",
     "@types/request": "^2.48.12",
