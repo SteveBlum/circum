@@ -4,4 +4,23 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    groups:
+      prod-npm-minor-dependencies:
+        dependency-type: "production"
+        update-types:
+        - "minor"
+        - "patch"
+      dev-npm-minor-dependencies:
+        dependency-type: "development"
+        update-types:
+        - "minor"
+        - "patch"
+      prod-npm-major-dependencies:
+        dependency-type: "production"
+        update-types:
+        - "major"
+      dev-npm-major-dependencies:
+        dependency-type: "development"
+        update-types:
+        - "major"
