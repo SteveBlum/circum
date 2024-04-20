@@ -304,7 +304,7 @@ export abstract class BaseController<T> {
     private triggerState(state: State, element: HTMLElement, timeToNormalMS = 0): void {
         const children = element.children;
         Array.from(children).forEach((child) => {
-            if (child.id && child.id.toLowerCase().includes(state.toLowerCase())) {
+            if (child.id.toLowerCase().includes(state.toLowerCase())) {
                 child.removeAttribute("hidden");
             } else if (containsState(child.id)) {
                 child.setAttribute("hidden", "true");

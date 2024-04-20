@@ -53,7 +53,7 @@ describe("Weather Frame Controller", () => {
             watchPosition: jest.fn(),
             clearWatch: jest.fn(),
         };
-        // @ts-expect-error because
+        // @ts-expect-error To mock the geolocation object, this is necessary
         navigator.geolocation = mockGeolocation;
         document.body.innerHTML =
             '<h3 id="weatherIcon" class="bi bi-brightness-high-fill main-weather"></h3>' +
@@ -360,7 +360,7 @@ describe("Weather Frame Controller", () => {
                     windSpeed10m: 10,
                 },
             });
-            expect(controller.wind.innerText).toBe("Wind: 10 km/h, direction undefined");
+            expect(controller.wind.innerText).toBe("Wind: 10 km/h, direction ");
         });
         it("Adds placeholders if received data doesn't contain currentWeather info", () => {
             controller.refreshView({ latitude: 51.1, longitude: 45.3 });

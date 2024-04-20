@@ -546,7 +546,7 @@ describe("Settings Popup Controller", () => {
             expect(errorElement?.hidden).toBe(false);
         });
         it("wakeLockCheckBox: toggles wakeLock property in unsaved configuration", () => {
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = "someObject";
             controller.addListenerOriginal();
             expect(controller.unsavedConfigObject.wakeLock).toBe(false);
@@ -554,7 +554,7 @@ describe("Settings Popup Controller", () => {
             expect(controller.unsavedConfigObject.wakeLock).toBe(true);
         });
         it("wakeLockCheckBox: If wake lock API is not available, unchecks and disables the checkbox", () => {
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = undefined;
             controller.addListenerOriginal();
             expect(controller.unsavedConfigObject.wakeLock).toBe(false);

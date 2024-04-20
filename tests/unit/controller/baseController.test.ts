@@ -49,7 +49,7 @@ describe("Base Controller", () => {
             watchPosition: jest.fn(),
             clearWatch: jest.fn(),
         };
-        // @ts-expect-error because
+        // @ts-expect-error To mock the geolocation object, this is necessary
         navigator.geolocation = mockGeolocation;
         controller = new TestController();
     });
@@ -68,7 +68,7 @@ describe("Base Controller", () => {
                 watchPosition: jest.fn(),
                 clearWatch: jest.fn(),
             };
-            // @ts-expect-error because
+            // @ts-expect-error To mock the geolocation object, this is necessary
             navigator.geolocation = mockGeolocationFailing;
             const res = await controller.getPosition();
             expect(res).toHaveProperty("coords");
@@ -83,7 +83,7 @@ describe("Base Controller", () => {
                 watchPosition: jest.fn(),
                 clearWatch: jest.fn(),
             };
-            // @ts-expect-error because
+            // @ts-expect-error To mock the geolocation object, this is necessary
             navigator.geolocation = mockGeolocationFailing;
             class TestController2 extends TestController {
                 get ipInfo(): Promise<Response> {
@@ -105,7 +105,7 @@ describe("Base Controller", () => {
                 watchPosition: jest.fn(),
                 clearWatch: jest.fn(),
             };
-            // @ts-expect-error because
+            // @ts-expect-error To mock the geolocation object, this is necessary
             navigator.geolocation = mockGeolocationFailing;
             class TestController2 extends TestController {
                 get ipInfo(): Promise<Response> {
@@ -133,7 +133,7 @@ describe("Base Controller", () => {
                 watchPosition: jest.fn(),
                 clearWatch: jest.fn(),
             };
-            // @ts-expect-error because
+            // @ts-expect-error To mock the geolocation object, this is necessary
             navigator.geolocation = mockGeolocationFailing;
             Object.defineProperty(controller, "ipInfo", {
                 get: jest
@@ -417,14 +417,14 @@ describe("Base Controller", () => {
             const mockWakeLock: WakeLock = {
                 request: mockWakeLockRequest,
             };
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = mockWakeLock;
             controller = new TestController();
             await controller.wakeLock.on();
             expect(mockWakeLockRequest).toHaveBeenCalledTimes(1);
         });
         it("on - Throws exception in case of incompatible device", async () => {
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = undefined;
             controller = new TestController();
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -481,13 +481,13 @@ describe("Base Controller", () => {
             expect(controller.wakeLock.check()).toBe(false);
         });
         it("compatible - Returns true in case that wakeLock object in navigator exists", () => {
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = "someObject";
             controller = new TestController();
             expect(controller.wakeLock.compatible()).toBe(true);
         });
         it("compatible - Returns false in case that wakeLock object in navigator doesn't exists", () => {
-            // @ts-expect-error because
+            // @ts-expect-error To mock the wakelock object, this is necessary
             navigator.wakeLock = undefined;
             controller = new TestController();
             expect(controller.wakeLock.compatible()).toBe(false);

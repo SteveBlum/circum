@@ -217,11 +217,17 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
         if (direction > 292 && direction <= 337) return "Northwest";
         return undefined;
     }
+    private toStringOrEmpty(num: number | string | undefined): string {
+        if (!num) return "";
+        return num.toString();
+    }
     protected refreshView(data: V1ForecastGet200Response | Error): void {
         if (data instanceof Error) {
             return;
         }
-        this.locationElement.textContent = `${data.latitude}, ${data.longitude}`;
+        this.locationElement.textContent = `${this.toStringOrEmpty(data.latitude)}, ${this.toStringOrEmpty(
+            data.longitude,
+        )}`;
         if (
             data.current?.temperature2m &&
             data.current.weatherCode &&
@@ -237,14 +243,14 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             if (!weatherIconCode) {
                 weatherIconCode = {
                     code: data.current.weatherCode,
-                    description: `Unknown Weather code: ${data.current.weatherCode}`,
+                    description: `Unknown Weather code: ${data.current.weatherCode.toString()}`,
                     icon: "question-circle-fill",
                 };
             }
             this.weatherIcon.className = `bi ${weatherIconCode.icon} main-weather`;
             this.weatherDescription.innerText = weatherIconCode.description;
-            this.wind.innerText = `Wind: ${data.current.windSpeed10m} km/h, direction ${this.getCardinalDirection(
-                data.current.windDirection10m,
+            this.wind.innerText = `Wind: ${data.current.windSpeed10m.toString()} km/h, direction ${this.toStringOrEmpty(
+                this.getCardinalDirection(data.current.windDirection10m),
             )}`;
         } else {
             this.temperatureElement.textContent = `--°C`;
@@ -296,23 +302,23 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
                 continue;
             }
             const div = document.createElement("div");
-            div.id = `forecastHourly${index}`;
+            div.id = `forecastHourly${index.toString()}`;
             div.className = "row justify-content-start";
             const time = document.createElement("p");
-            time.id = `forecastHourlyTime${index}`;
+            time.id = `forecastHourlyTime${index.toString()}`;
             time.className = "col-md-auto light-text";
             time.innerText = `${new Date(forecasts.time[index]).toLocaleDateString(defaultConfig.locale)} ${new Date(
                 forecasts.time[index],
             ).toLocaleTimeString(defaultConfig.locale)}`;
             const icon = document.createElement("i");
-            icon.id = `forecastHourlyIcon${index}`;
+            icon.id = `forecastHourlyIcon${index.toString()}`;
             icon.className = `col-md-auto bi ${weatherCode.icon}`;
             const temparature = document.createElement("p");
-            temparature.id = `forecastHourlyTemparature${index}`;
+            temparature.id = `forecastHourlyTemparature${index.toString()}`;
             temparature.className = "col-md-auto mr-3 green-font";
-            temparature.innerText = `${forecasts.temperature2m[index]}°C`;
+            temparature.innerText = `${forecasts.temperature2m[index].toString()}°C`;
             const weatherDescription = document.createElement("p");
-            weatherDescription.id = `forecastHourlyWeatherDescription${index}`;
+            weatherDescription.id = `forecastHourlyWeatherDescription${index.toString()}`;
             weatherDescription.className = "col-md-auto ml-auto";
             weatherDescription.innerText = weatherCode.description;
             div.appendChild(time);
