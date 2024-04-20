@@ -6,7 +6,7 @@ module.exports = merge(common, {
     devtool: "inline-source-map",
     devServer: {
         static: path.join(__dirname, "dist"),
-        https: false,
+        server: "http",
         watchFiles: {
             paths: ["src/**/*.*"],
             options: {
