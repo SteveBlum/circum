@@ -40,7 +40,7 @@ export class ClockController extends BaseController<ClockConfig> {
         void this.refresh();
     }
     protected getRgbaString(color: RgbaColor): string {
-        return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        return `rgba(${color.r.toString()}, ${color.g.toString()}, ${color.b.toString()}, ${color.a.toString()})`;
     }
     protected darkenColor(color: RgbaColor): RgbaColor {
         return {

@@ -42,7 +42,7 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
         trigger: async (): Promise<void> => {
             const data = this.data instanceof Promise ? await this.data : this.data;
             this._listeners.forEach((listener) => {
-                //@ts-expect-error Because
+                //@ts-expect-error This is incorrectly flagged as incompatible data type
                 listener.callback(data);
             });
         },
@@ -87,12 +87,12 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
             }
         }
         if (tempData instanceof Promise) {
-            //@ts-expect-error Because
+            //@ts-expect-error TypeScript doesn't recognize, that this can only be a Promise
             return tempData.catch((err: Error) => {
                 return err;
             });
         } else {
-            //@ts-expect-error Because
+            //@ts-expect-error Isn't handled correctly by TypeScript due to the reason above
             return tempData;
         }
     }

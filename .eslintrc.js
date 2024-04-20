@@ -43,6 +43,7 @@ module.exports = {
                         ],
                     },
                 ],
+                "@typescript-eslint/use-unknown-in-catch-callback-variable": ["off"],
             },
             env: {
                 browser: true,
