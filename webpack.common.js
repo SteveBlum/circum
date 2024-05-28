@@ -76,7 +76,7 @@ module.exports = {
                 type: "asset/resource",
                 generator: {
                     // keep original directory structure
-                    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
                     filename: ({ filename }) => {
                         const srcPath = "css/fonts";
                         const regExp = new RegExp(`[\\\\/]?(?:${path.normalize(srcPath)}|node_modules)[\\\\/](.+?)$`);
