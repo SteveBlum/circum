@@ -133,7 +133,7 @@ describe("Model class", () => {
                 if (blah === "") {
                     return "something";
                 }
-                // eslint-disable-next-line @typescript-eslint/no-throw-literal
+
                 // eslint-disable-next-line @typescript-eslint/only-throw-error
                 throw "Test";
             });
