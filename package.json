@@ -53,7 +53,7 @@
     "ts-node": "^10.9.2",
     "typedoc": "^0.26.3",
     "typescript": "^5.5.3",
-    "typescript-eslint": "8.0.0-alpha.30",
+    "typescript-eslint": "8.0.0-alpha.55",
     "wait-on": "^7.2.0",
     "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4",
