@@ -143,6 +143,8 @@ interface WakeLock {
 /**
  * Circum-specifc base class for a controller
  */
+// As referenced in the documentation of that rule, there are many unintended consequences. I believe this to be one of them.
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export abstract class BaseController<T> {
     public abstract refresh(): Promise<void>;
     private ipInfoPosition: undefined | GeolocationPosition = undefined;
