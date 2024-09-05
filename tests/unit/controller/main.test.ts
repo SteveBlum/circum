@@ -214,6 +214,8 @@ describe("Main Controller", () => {
         it("Triggers refresh action", () => {
             const mockRefresh = jest.fn();
             class ConfigTestController extends TestController {
+                // Not sure how else I would spy on a non-async function mocked with jest.fn
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 public async refreshView(): Promise<void> {
                     await mockRefresh();
                 }

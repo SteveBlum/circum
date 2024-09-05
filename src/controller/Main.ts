@@ -220,7 +220,8 @@ export class MainController extends BaseController<Settings> {
                     const frame = window.document.createElement("iframe");
                     frame.id = `${this.frameCounter.toString()}Frame`;
                     frame.className = "vh-100";
-                    frame.frameBorder = "0";
+                    // Scrolling is deprecated, but there is no alternative: https://github.com/davidjbradshaw/iframe-resizer/issues/1142
+                    // eslint-disable-next-line @typescript-eslint/no-deprecated
                     frame.scrolling = "no";
                     frame.src = site.url;
                     const frameDiv = window.document.createElement("div");
