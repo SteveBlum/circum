@@ -89,7 +89,9 @@ describe("Weather Frame Controller", () => {
                 altitudeAccuracy: 2,
                 heading: 2,
                 speed: 2,
+                toJSON: () => {},
             },
+            toJSON: () => {},
         };
         beforeEach(() => {
             controller = new WeatherController();
