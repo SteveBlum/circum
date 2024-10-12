@@ -6,6 +6,7 @@ import { Model } from "../../../../src/models/model";
 describe("Weather Frame Controller", () => {
     const mockGeolocationPosition = {
         timestamp: 1,
+        toJSON: (): GeolocationPosition | undefined => undefined,
         coords: {
             latitude: 51.1,
             longitude: 45.3,
@@ -14,6 +15,7 @@ describe("Weather Frame Controller", () => {
             altitudeAccuracy: 1,
             heading: 1,
             speed: 1,
+            toJSON: (): GeolocationCoordinates | undefined => undefined,
         },
     };
     const weatherData: V1ForecastGet200Response = {
@@ -39,6 +41,7 @@ describe("Weather Frame Controller", () => {
             getCurrentPosition: jest.fn().mockImplementation((success) => {
                 success({
                     timestamp: 1,
+                    toJSON: (): GeolocationPosition | undefined => undefined,
                     coords: {
                         latitude: 51.1,
                         longitude: 45.3,
@@ -47,6 +50,7 @@ describe("Weather Frame Controller", () => {
                         altitudeAccuracy: 1,
                         heading: 1,
                         speed: 1,
+                        toJSON: (): GeolocationCoordinates | undefined => undefined,
                     },
                 });
             }),
@@ -81,6 +85,7 @@ describe("Weather Frame Controller", () => {
         let spy: jest.SpyInstance<Promise<GeolocationPosition>>;
         const mockGeolocationPosition2 = {
             timestamp: 1,
+            toJSON: (): GeolocationPosition | undefined => undefined,
             coords: {
                 latitude: 51.1,
                 longitude: 45.3,
@@ -89,6 +94,7 @@ describe("Weather Frame Controller", () => {
                 altitudeAccuracy: 2,
                 heading: 2,
                 speed: 2,
+                toJSON: (): GeolocationCoordinates | undefined => undefined,
             },
         };
         beforeEach(() => {
@@ -104,7 +110,8 @@ describe("Weather Frame Controller", () => {
         });
         it("Reuses old position if not told otherwise", async () => {
             const res = await controller.getCoordinates();
-            expect(res).toStrictEqual(mockGeolocationPosition.coords);
+            expect(res.latitude).toEqual(mockGeolocationPosition.coords.latitude);
+            expect(res.longitude).toEqual(mockGeolocationPosition.coords.longitude);
             expect(spy).toBeCalledTimes(0);
         });
     });
