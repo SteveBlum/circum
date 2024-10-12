@@ -347,10 +347,10 @@ export abstract class BaseController<T> {
                 latitude: Number(ipInfo.loc.split(",")[0]),
                 longitude: Number(ipInfo.loc.split(",")[1]),
                 speed: NaN,
-                toJSON: () => {},
+                toJSON: (): GeolocationCoordinates | undefined => undefined,
             },
             timestamp: new Date().getTime(),
-            toJSON: () => {},
+            toJSON: (): GeolocationPosition | undefined => undefined,
         };
     }
     protected isUrlValid(checkURL: string): boolean {
