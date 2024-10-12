@@ -17,6 +17,9 @@ const defaultConfig: WeatherConfig = {
     locale: "de-DE",
 };
 
+/**
+ * All 8 cardinal directions in full Text
+ */
 type CardinalDirection = "North" | "Northeast" | "East" | "Southeast" | "South" | "Southwest" | "West" | "Northwest";
 
 /**

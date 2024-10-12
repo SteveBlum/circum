@@ -24,6 +24,9 @@ const MessageTypeMetadata = {
     },
 };
 
+/**
+ * Message severity, which can be info, warning, error or success
+ */
 type MessageType = keyof typeof MessageTypeMetadata;
 
 /**

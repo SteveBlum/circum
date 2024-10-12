@@ -1,5 +1,8 @@
 import { defaults } from "../models/Config";
 
+/**
+ * Generic envent handler function type
+ */
 type eventFunction = (event: Event) => void;
 interface IPInfo {
     ip: string;
@@ -15,6 +18,10 @@ interface IPInfo {
 }
 
 const states = ["Loading", "Success", "Error", "Normal"] as const;
+
+/**
+ * States are used for status-dependent UI elements that should only be visible in case that the respective state is activated
+ */
 type State = (typeof states)[number];
 
 /**
