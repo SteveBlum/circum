@@ -6,6 +6,7 @@ import { Model } from "../../../../src/models/model";
 describe("Weather Frame Controller", () => {
     const mockGeolocationPosition = {
         timestamp: 1,
+        toJSON: () => {},
         coords: {
             latitude: 51.1,
             longitude: 45.3,
@@ -14,6 +15,7 @@ describe("Weather Frame Controller", () => {
             altitudeAccuracy: 1,
             heading: 1,
             speed: 1,
+            toJSON: () => {},
         },
     };
     const weatherData: V1ForecastGet200Response = {
@@ -39,6 +41,7 @@ describe("Weather Frame Controller", () => {
             getCurrentPosition: jest.fn().mockImplementation((success) => {
                 success({
                     timestamp: 1,
+                    toJSON: () => {},
                     coords: {
                         latitude: 51.1,
                         longitude: 45.3,
@@ -47,6 +50,7 @@ describe("Weather Frame Controller", () => {
                         altitudeAccuracy: 1,
                         heading: 1,
                         speed: 1,
+                        toJSON: () => {},
                     },
                 });
             }),
@@ -81,6 +85,7 @@ describe("Weather Frame Controller", () => {
         let spy: jest.SpyInstance<Promise<GeolocationPosition>>;
         const mockGeolocationPosition2 = {
             timestamp: 1,
+            toJSON: () => {},
             coords: {
                 latitude: 51.1,
                 longitude: 45.3,
@@ -89,6 +94,7 @@ describe("Weather Frame Controller", () => {
                 altitudeAccuracy: 2,
                 heading: 2,
                 speed: 2,
+                toJSON: () => {},
             },
         };
         beforeEach(() => {

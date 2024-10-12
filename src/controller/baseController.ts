@@ -347,8 +347,10 @@ export abstract class BaseController<T> {
                 latitude: Number(ipInfo.loc.split(",")[0]),
                 longitude: Number(ipInfo.loc.split(",")[1]),
                 speed: NaN,
+                toJSON: () => {},
             },
             timestamp: new Date().getTime(),
+            toJSON: () => {},
         };
     }
     protected isUrlValid(checkURL: string): boolean {
