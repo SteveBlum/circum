@@ -243,13 +243,11 @@ export class WeatherController extends BaseController<V1ForecastGet200Response> 
             ).toLocaleTimeString(defaultConfig.locale)}`;
             this.lastUpdatedElement.textContent = `last updated: ${currentDateTime}`;
             let weatherIconCode = this.findWeatherCode(data.current.weatherCode);
-            if (!weatherIconCode) {
-                weatherIconCode = {
-                    code: data.current.weatherCode,
-                    description: `Unknown Weather code: ${data.current.weatherCode.toString()}`,
-                    icon: "question-circle-fill",
-                };
-            }
+            weatherIconCode ??= {
+                code: data.current.weatherCode,
+                description: `Unknown Weather code: ${data.current.weatherCode.toString()}`,
+                icon: "question-circle-fill",
+            };
             this.weatherIcon.className = `bi ${weatherIconCode.icon} main-weather`;
             this.weatherDescription.innerText = weatherIconCode.description;
             this.wind.innerText = `Wind: ${data.current.windSpeed10m.toString()} km/h, direction ${this.toStringOrEmpty(

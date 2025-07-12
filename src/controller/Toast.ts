@@ -101,7 +101,7 @@ export class CustomToast {
         textElement.className = "me-auto";
         textElement.innerText = text;
         const detailElement = document.createElement("small");
-        detailElement.innerText = detailText ? detailText : "";
+        detailElement.innerText = detailText ?? "";
         const closeButton = document.createElement("button");
         closeButton.type = "button";
         closeButton.className = "btn-close";
