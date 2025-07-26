@@ -104,7 +104,7 @@ describe("Main Controller", () => {
         it("Throws error if provided with one", () => {
             expect(() => {
                 controller.refreshView(new Error("Test"));
-            }).toThrowError("Test");
+            }).toThrow("Test");
         });
         it("Activates wake lock if configured", () => {
             const newConfig = {
@@ -244,7 +244,7 @@ describe("Main Controller", () => {
             expect(res.id).toBe("0Frame");
         });
         it("get - Fails if no such iframe exists", () => {
-            expect(controller.frame("nonExistentFrame").get).toThrowError(
+            expect(controller.frame("nonExistentFrame").get).toThrow(
                 "Element nonExistentFrame, type iframe couldn't be found",
             );
         });
@@ -264,7 +264,7 @@ describe("Main Controller", () => {
             expect(document.getElementById("0FrameDiv")).toBe(null);
         });
         it("remove - Throws error when trying to remove a non-existent frame", () => {
-            expect(controller.frame("nonExistentFrame").remove).toThrowError(
+            expect(controller.frame("nonExistentFrame").remove).toThrow(
                 "Element nonExistentFrame, type iframe couldn't be found",
             );
         });

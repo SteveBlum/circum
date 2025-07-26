@@ -67,7 +67,7 @@ describe("Clock Frame Controller", () => {
         });
         it("Throws error in case that no such canvas exists", () => {
             document.body.innerHTML = "";
-            expect(() => controller.canvas).toThrowError("Element canvas, type canvas couldn't be found");
+            expect(() => controller.canvas).toThrow("Element canvas, type canvas couldn't be found");
         });
     });
     describe("canvasContext", () => {
@@ -81,7 +81,7 @@ describe("Clock Frame Controller", () => {
             controller.canvas.getContext = jest.fn().mockImplementation(() => {
                 return null;
             });
-            expect(() => controller.canvasContext).toThrowError("Didn't find 2D context for canvas canvas");
+            expect(() => controller.canvasContext).toThrow("Didn't find 2D context for canvas canvas");
         });
     });
     describe("getData", () => {
@@ -106,20 +106,20 @@ describe("Clock Frame Controller", () => {
         });
         it("Runs without exception", () => {
             controller = new TestController(config);
-            expect(controller.renderTime).not.toThrowError();
+            expect(controller.renderTime).not.toThrow();
         });
         it("Runs without exception if canvas height > canvas width", () => {
             controller = new NewController(config);
             controller.canvas.height = 1000;
             controller.canvas.width = 900;
-            expect(controller.renderTime).not.toThrowError();
+            expect(controller.renderTime).not.toThrow();
             expect(controller.canvas.height > controller.canvas.width).toBe(true);
         });
         it("Runs without exception if canvas width > canvas height", () => {
             controller = new NewController(config);
             controller.canvas.height = 900;
             controller.canvas.width = 1000;
-            expect(controller.renderTime).not.toThrowError();
+            expect(controller.renderTime).not.toThrow();
             expect(controller.canvas.width > controller.canvas.height).toBe(true);
         });
     });
@@ -160,7 +160,7 @@ describe("Clock Frame Controller", () => {
         it("Throws error if provided with one", () => {
             expect(() => {
                 controller.refreshView(new Error("Test"));
-            }).toThrowError("Test");
+            }).toThrow("Test");
         });
     });
 });

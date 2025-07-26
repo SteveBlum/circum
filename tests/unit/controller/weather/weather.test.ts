@@ -106,13 +106,13 @@ describe("Weather Frame Controller", () => {
         it("Get coordinates from position", async () => {
             const res = await controller.getCoordinates(true);
             expect(res).toStrictEqual(mockGeolocationPosition2.coords);
-            expect(spy).toBeCalledTimes(1);
+            expect(spy).toHaveBeenCalledTimes(1);
         });
         it("Reuses old position if not told otherwise", async () => {
             const res = await controller.getCoordinates();
             expect(res.latitude).toEqual(mockGeolocationPosition.coords.latitude);
             expect(res.longitude).toEqual(mockGeolocationPosition.coords.longitude);
-            expect(spy).toBeCalledTimes(0);
+            expect(spy).toHaveBeenCalledTimes(0);
         });
     });
     describe("refreshSync", () => {
@@ -128,9 +128,9 @@ describe("Weather Frame Controller", () => {
             controller = new TestController();
         });
         it("Triggers refresh", () => {
-            expect(mockRefresh).toBeCalledTimes(0);
+            expect(mockRefresh).toHaveBeenCalledTimes(0);
             controller.syncRefresh();
-            expect(mockRefresh).toBeCalledTimes(1);
+            expect(mockRefresh).toHaveBeenCalledTimes(1);
         });
     });
     describe("refresh", () => {
@@ -145,12 +145,12 @@ describe("Weather Frame Controller", () => {
         }
         let controller: TestController;
         it("Uses model to request new data", async () => {
-            expect(mockGetData).toBeCalledTimes(0);
+            expect(mockGetData).toHaveBeenCalledTimes(0);
             controller = new TestController();
             // Triggered by constructor twice
-            expect(mockGetData).toBeCalledTimes(2);
+            expect(mockGetData).toHaveBeenCalledTimes(2);
             await controller.refresh();
-            expect(mockGetData).toBeCalledTimes(3);
+            expect(mockGetData).toHaveBeenCalledTimes(3);
         });
     });
     describe("refreshView", () => {
@@ -219,7 +219,7 @@ describe("Weather Frame Controller", () => {
                     weatherCode: [48, 55],
                 },
             });
-            expect(() => controller.element("forecastHourlyTime0").get()).toThrowError(
+            expect(() => controller.element("forecastHourlyTime0").get()).toThrow(
                 "Element forecastHourlyTime0 couldn't be found",
             );
         });
@@ -241,7 +241,7 @@ describe("Weather Frame Controller", () => {
                     weatherCode: [100],
                 },
             });
-            expect(() => controller.element("forecastHourlyTime0").get()).toThrowError(
+            expect(() => controller.element("forecastHourlyTime0").get()).toThrow(
                 "Element forecastHourlyTime0 couldn't be found",
             );
         });

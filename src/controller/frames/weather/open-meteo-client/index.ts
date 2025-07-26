@@ -1,12 +1,14 @@
+import { PromiseMiddleware as Middleware } from "./middleware";
+import { Configuration } from "./configuration";
+
+export { PromiseWeatherForecastAPIsApi as WeatherForecastAPIsApi } from "./types/PromiseAPI";
 export * from "./http/http";
 export * from "./auth/auth";
 export * from "./models/all";
-export { createConfiguration } from "./configuration"
-export { Configuration } from "./configuration"
+export { createConfiguration } from "./configuration";
 export * from "./apis/exception";
 export * from "./servers";
 export { RequiredError } from "./apis/baseapi";
 
-export { PromiseMiddleware as Middleware } from './middleware';
-export { PromiseWeatherForecastAPIsApi as WeatherForecastAPIsApi } from './types/PromiseAPI';
-
+export type { Middleware };
+export type { Configuration };

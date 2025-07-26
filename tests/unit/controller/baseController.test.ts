@@ -187,21 +187,21 @@ describe("Base Controller", () => {
         it("get - Throws exception if ID doesn't exist", () => {
             expect(() => {
                 controller.element("notExisting").get();
-            }).toThrowError("Element notExisting couldn't be found");
+            }).toThrow("Element notExisting couldn't be found");
         });
         it("addListener - adds a single event listener function", () => {
             const mockListener = jest.fn();
             controller.element("temperature").addListener("click", mockListener);
             document.getElementById("temperature")?.click();
-            expect(mockListener).toBeCalledTimes(1);
+            expect(mockListener).toHaveBeenCalledTimes(1);
         });
         it("addListener - adds multiple event listener functions", () => {
             const mockListener1 = jest.fn();
             const mockListener2 = jest.fn();
             controller.element("temperature").addListener("click", [mockListener1, mockListener2]);
             document.getElementById("temperature")?.click();
-            expect(mockListener1).toBeCalledTimes(1);
-            expect(mockListener2).toBeCalledTimes(1);
+            expect(mockListener1).toHaveBeenCalledTimes(1);
+            expect(mockListener2).toHaveBeenCalledTimes(1);
         });
         it("remove - removes the element from DOM", () => {
             controller.element("temperature").remove();
@@ -285,25 +285,25 @@ describe("Base Controller", () => {
             const mockListener = jest.fn();
             controller.elements("green-font").addListener("click", mockListener);
             document.getElementById("temperature")?.click();
-            expect(mockListener).toBeCalledTimes(1);
+            expect(mockListener).toHaveBeenCalledTimes(1);
             document.getElementById("location")?.click();
-            expect(mockListener).toBeCalledTimes(2);
+            expect(mockListener).toHaveBeenCalledTimes(2);
             document.getElementById("lastUpdated")?.click();
-            expect(mockListener).toBeCalledTimes(3);
+            expect(mockListener).toHaveBeenCalledTimes(3);
         });
         it("addListener - adds multiple event listener functions to all matching elements", () => {
             const mockListener1 = jest.fn();
             const mockListener2 = jest.fn();
             controller.elements("green-font").addListener("click", [mockListener1, mockListener2]);
             document.getElementById("temperature")?.click();
-            expect(mockListener1).toBeCalledTimes(1);
-            expect(mockListener2).toBeCalledTimes(1);
+            expect(mockListener1).toHaveBeenCalledTimes(1);
+            expect(mockListener2).toHaveBeenCalledTimes(1);
             document.getElementById("location")?.click();
-            expect(mockListener1).toBeCalledTimes(2);
-            expect(mockListener2).toBeCalledTimes(2);
+            expect(mockListener1).toHaveBeenCalledTimes(2);
+            expect(mockListener2).toHaveBeenCalledTimes(2);
             document.getElementById("lastUpdated")?.click();
-            expect(mockListener1).toBeCalledTimes(3);
-            expect(mockListener2).toBeCalledTimes(3);
+            expect(mockListener1).toHaveBeenCalledTimes(3);
+            expect(mockListener2).toHaveBeenCalledTimes(3);
         });
         it("remove - removes all matching elements from DOM", () => {
             controller.elements("green-font").remove();
@@ -332,21 +332,21 @@ describe("Base Controller", () => {
         it("get - Throws exception if ID doesn't exist", () => {
             expect(() => {
                 controller.typedElement("notExisting", "h1").get();
-            }).toThrowError("Element notExisting, type h1 couldn't be found");
+            }).toThrow("Element notExisting, type h1 couldn't be found");
         });
         it("addListener - adds a single event listener function", () => {
             const mockListener = jest.fn();
             controller.typedElement("temperature", "h1").addListener("click", mockListener);
             document.getElementById("temperature")?.click();
-            expect(mockListener).toBeCalledTimes(1);
+            expect(mockListener).toHaveBeenCalledTimes(1);
         });
         it("addListener - adds multiple event listener functions", () => {
             const mockListener1 = jest.fn();
             const mockListener2 = jest.fn();
             controller.typedElement("temperature", "h1").addListener("click", [mockListener1, mockListener2]);
             document.getElementById("temperature")?.click();
-            expect(mockListener1).toBeCalledTimes(1);
-            expect(mockListener2).toBeCalledTimes(1);
+            expect(mockListener1).toHaveBeenCalledTimes(1);
+            expect(mockListener2).toHaveBeenCalledTimes(1);
         });
         it("remove - removes the element from DOM", () => {
             controller.typedElement("temperature", "h1").remove();
@@ -381,25 +381,25 @@ describe("Base Controller", () => {
             const mockListener = jest.fn();
             controller.typedElements("h1").addListener("click", mockListener);
             document.getElementById("temperature")?.click();
-            expect(mockListener).toBeCalledTimes(1);
+            expect(mockListener).toHaveBeenCalledTimes(1);
             document.getElementById("location")?.click();
-            expect(mockListener).toBeCalledTimes(2);
+            expect(mockListener).toHaveBeenCalledTimes(2);
             document.getElementById("lastUpdated")?.click();
-            expect(mockListener).toBeCalledTimes(3);
+            expect(mockListener).toHaveBeenCalledTimes(3);
         });
         it("addListener - adds multiple event listener functions to all matching elements", () => {
             const mockListener1 = jest.fn();
             const mockListener2 = jest.fn();
             controller.typedElements("h1").addListener("click", [mockListener1, mockListener2]);
             document.getElementById("temperature")?.click();
-            expect(mockListener1).toBeCalledTimes(1);
-            expect(mockListener2).toBeCalledTimes(1);
+            expect(mockListener1).toHaveBeenCalledTimes(1);
+            expect(mockListener2).toHaveBeenCalledTimes(1);
             document.getElementById("location")?.click();
-            expect(mockListener1).toBeCalledTimes(2);
-            expect(mockListener2).toBeCalledTimes(2);
+            expect(mockListener1).toHaveBeenCalledTimes(2);
+            expect(mockListener2).toHaveBeenCalledTimes(2);
             document.getElementById("lastUpdated")?.click();
-            expect(mockListener1).toBeCalledTimes(3);
-            expect(mockListener2).toBeCalledTimes(3);
+            expect(mockListener1).toHaveBeenCalledTimes(3);
+            expect(mockListener2).toHaveBeenCalledTimes(3);
         });
         it("remove - removes all matching elements from DOM", () => {
             controller.typedElements("h1").remove();

@@ -148,7 +148,7 @@ describe("Settings Popup Controller", () => {
         it("Throws error if provided with one", () => {
             expect(() => {
                 controller.refreshView(new Error("Test"));
-            }).toThrowError("Test");
+            }).toThrow("Test");
         });
         it("frame management table should have records of configured frames", () => {
             controller.refreshView(config);
@@ -249,84 +249,84 @@ describe("Settings Popup Controller", () => {
             controller = new TestController(configModel);
         });
         it("modal - positive test", () => {
-            expect(() => controller.modal.get()).not.toThrowError();
+            expect(() => controller.modal.get()).not.toThrow();
             expect(controller.modal.get().id).toBe("settings");
         });
         it("modal - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.modal.get()).toThrowError("Element settings, type div couldn't be found");
+            expect(() => controller.modal.get()).toThrow("Element settings, type div couldn't be found");
         });
         it("refreshRateSlider - positive test", () => {
-            expect(() => controller.refreshRateSlider.get()).not.toThrowError();
+            expect(() => controller.refreshRateSlider.get()).not.toThrow();
             expect(controller.refreshRateSlider.get().id).toBe("refreshRateSlider");
         });
         it("refreshRateSlider - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.refreshRateSlider.get()).toThrowError(
+            expect(() => controller.refreshRateSlider.get()).toThrow(
                 "Element refreshRateSlider, type input couldn't be found",
             );
         });
         it("refreshRateText - positive test", () => {
-            expect(() => controller.refreshRateText).not.toThrowError();
+            expect(() => controller.refreshRateText).not.toThrow();
             expect(controller.refreshRateText.id).toBe("refreshRate");
         });
         it("refreshRateText - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.refreshRateText).toThrowError("Element refreshRate, type p couldn't be found");
+            expect(() => controller.refreshRateText).toThrow("Element refreshRate, type p couldn't be found");
         });
         it("rotationRateSlider - positive test", () => {
-            expect(() => controller.rotationRateSlider.get()).not.toThrowError();
+            expect(() => controller.rotationRateSlider.get()).not.toThrow();
             expect(controller.rotationRateSlider.get().id).toBe("rotationRateSlider");
         });
         it("rotationRateSlider - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.rotationRateSlider.get()).toThrowError(
+            expect(() => controller.rotationRateSlider.get()).toThrow(
                 "Element rotationRateSlider, type input couldn't be found",
             );
         });
         it("rotationRateText - positive test", () => {
-            expect(() => controller.rotationRateText).not.toThrowError();
+            expect(() => controller.rotationRateText).not.toThrow();
             expect(controller.rotationRateText.id).toBe("rotationRate");
         });
         it("rotationRateText - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.rotationRateText).toThrowError("Element rotationRate, type p couldn't be found");
+            expect(() => controller.rotationRateText).toThrow("Element rotationRate, type p couldn't be found");
         });
         it("frameTable - positive test", () => {
-            expect(() => controller.frameTable.get()).not.toThrowError();
+            expect(() => controller.frameTable.get()).not.toThrow();
             expect(controller.frameTable.get().id).toBe("frameTable");
         });
         it("frameTable - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.frameTable.get()).toThrowError("Element frameTable, type table couldn't be found");
+            expect(() => controller.frameTable.get()).toThrow("Element frameTable, type table couldn't be found");
         });
         it("addFrameButton - positive test", () => {
-            expect(() => controller.addFrameButton.get()).not.toThrowError();
+            expect(() => controller.addFrameButton.get()).not.toThrow();
             expect(controller.addFrameButton.get().id).toBe("addFrameButton");
         });
         it("addFrameButton - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.addFrameButton.get()).toThrowError(
+            expect(() => controller.addFrameButton.get()).toThrow(
                 "Element addFrameButton, type button couldn't be found",
             );
         });
         it("saveConfigButton - positive test", () => {
-            expect(() => controller.saveConfigButton.get()).not.toThrowError();
+            expect(() => controller.saveConfigButton.get()).not.toThrow();
             expect(controller.saveConfigButton.get().id).toBe("saveConfigButton");
         });
         it("saveConfigButton - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.saveConfigButton.get()).toThrowError(
+            expect(() => controller.saveConfigButton.get()).toThrow(
                 "Element saveConfigButton, type button couldn't be found",
             );
         });
         it("discardConfigButton - positive test", () => {
-            expect(() => controller.discardConfigButton.get()).not.toThrowError();
+            expect(() => controller.discardConfigButton.get()).not.toThrow();
             expect(controller.discardConfigButton.get().id).toBe("discardConfigButton");
         });
         it("discardConfigButton - negative test", () => {
             document.body.innerHTML = "";
-            expect(() => controller.discardConfigButton.get()).toThrowError(
+            expect(() => controller.discardConfigButton.get()).toThrow(
                 "Element discardConfigButton, type button couldn't be found",
             );
         });
@@ -573,7 +573,7 @@ describe("Settings Popup Controller", () => {
             expect(res).toBe(1);
         });
         it("Throws error if given column id doesn't exist", () => {
-            expect(() => controller.getTableColumnIndex("NotExisting")).toThrowError(
+            expect(() => controller.getTableColumnIndex("NotExisting")).toThrow(
                 "Element NotExisting, type th couldn't be found",
             );
         });
@@ -583,7 +583,7 @@ describe("Settings Popup Controller", () => {
                     get: (): HTMLTableCellElement => document.createElement("th"),
                 };
             });
-            expect(() => controller.getTableColumnIndex("frameUrlHeader")).toThrowError(
+            expect(() => controller.getTableColumnIndex("frameUrlHeader")).toThrow(
                 "No parent found for header cell frameUrlHeader",
             );
         });
