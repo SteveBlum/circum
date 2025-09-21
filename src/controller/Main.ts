@@ -179,6 +179,8 @@ export class MainController extends BaseController<Settings> {
             },
             refresh: (): void => {
                 const frame = this.frame(id).get();
+                /* This is not about string concatenation, but about triggering a refresh */
+                /* eslint-disable @typescript-eslint/no-unnecessary-type-conversion */
                 frame.src += "";
             },
             remove: (): void => {
@@ -245,6 +247,8 @@ export class MainController extends BaseController<Settings> {
             refresh: (): void => {
                 const frames = this.frames().get();
                 for (const frame of frames) {
+                    /* This is not about string concatenation, but about triggering a refresh */
+                    /* eslint-disable @typescript-eslint/no-unnecessary-type-conversion */
                     frame.src += "";
                 }
             },
