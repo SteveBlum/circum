@@ -80,7 +80,7 @@ export class SettingsPopupController extends BaseController<Settings> {
             const timeToNormalSuccess = 10000;
             const target = event.target as HTMLInputElement;
             this.importConfigButton.triggerState("Loading");
-            if (!target.files || target.files.length !== 1) {
+            if (target.files?.length !== 1) {
                 this.importConfigButton.triggerState("Error", timeToNormalError);
                 return;
             }
