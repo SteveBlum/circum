@@ -29,7 +29,7 @@ const defaultConfig: ClockConfig = {
 export class ClockController extends BaseController<ClockConfig> {
     protected _model: Model<() => Promise<ClockConfig>>;
     protected config: ClockConfig;
-    protected interval: NodeJS.Timer | undefined;
+    protected interval: NodeJS.Timeout | undefined;
     private canvasID = "canvas";
     // Nothing to be said about this constructor
     // eslint-disable-next-line jsdoc/require-jsdoc
