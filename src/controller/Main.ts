@@ -19,7 +19,7 @@ interface Frames {
  * Controller for circum main screen, belongs to src/views/partials/Main.html
  */
 export class MainController extends BaseController<Settings> {
-    private job: NodeJS.Timer | undefined;
+    private job: NodeJS.Timeout | undefined;
     public frameCounter = 0;
     protected _model: ConfigModel;
     public loading: Promise<void>;

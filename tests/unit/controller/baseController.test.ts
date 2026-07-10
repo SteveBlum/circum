@@ -155,7 +155,7 @@ describe("Base Controller", () => {
                                         readme: "https://ipinfo.io/missingauth",
                                     };
                                 },
-                            } as unknown as Response);
+                            });
                         });
                     })
                     .mockImplementationOnce(() => {
