@@ -10,10 +10,10 @@ describe("Clock Frame Controller", () => {
         get configObject(): ClockConfig {
             return this.config;
         }
-        get intervalTest(): NodeJS.Timer | undefined {
+        get intervalTest(): NodeJS.Timeout | undefined {
             return this.interval;
         }
-        set intervalTest(interval: NodeJS.Timer | undefined) {
+        set intervalTest(interval: NodeJS.Timeout | undefined) {
             this.interval = interval;
         }
     }
