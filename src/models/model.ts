@@ -76,7 +76,7 @@ export class Model<T extends GetterFunction<ReturnType<T>>> {
      * The result is cached and can be read by the data getter function at any point.
      */
     protected executeGetData(): GetterFunctionReturn<ReturnType<T>> {
-        let tempData: ReturnType<T> | Error = new Error("Function wasn't executed");
+        let tempData: ReturnType<T> | Error;
         try {
             tempData = this._getData();
         } catch (err: unknown) {
