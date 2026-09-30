@@ -18,7 +18,7 @@ class Test implements openMeteo.Middleware {
 
 // Create configuration parameter object
 const configurationParameters = {
-    baseServer: new openMeteo.ServerConfiguration<NonNullable<unknown>>("https://api.open-meteo.com", {}),
+    baseServer: new openMeteo.ServerConfiguration("https://api.open-meteo.com", {}),
     authMethods: authConfig, // No auth is default
     promiseMiddleware: [new Test()],
 };
