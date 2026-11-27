@@ -65,7 +65,7 @@
     "workbox-webpack-plugin": "^7.4.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.8",
+    "bootstrap": "^5.3.9",
     "bootstrap-icons": "^1.13.2",
     "whatwg-fetch": "^3.6.20"
   }
